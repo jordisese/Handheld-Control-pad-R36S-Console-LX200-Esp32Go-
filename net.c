@@ -11,7 +11,7 @@ int readcc(void)
 #ifdef K36S
     fp = fopen("/roms/esp32go/conf.cfg", "r");
 #else
-    fp = fopen("/home/angel/ROM/planet/conf.cfg", "r");
+    fp = fopen("conf.cfg", "r");
 #endif
     if (fp == NULL)
         if (fp == NULL)

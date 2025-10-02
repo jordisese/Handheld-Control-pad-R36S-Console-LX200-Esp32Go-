@@ -110,3 +110,73 @@
 	"sdl2utils.h"
 	"kpad.h"
 
+1759231156 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/esp32go.c
+	<stdio.h>
+	<stdbool.h>
+	<string.h>
+	<time.h>
+	"kpad.h"
+	"conf.h"
+	"query.h"
+	"sdl2utils.h"
+	"net.h"
+	<math.h>
+
+1759075241 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/kpad.h
+	<SDL2/SDL.h>
+
+1759397562 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/conf.h
+
+1759176023 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/query.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<ctype.h>
+	"sqlite3.h"
+	<libnova/solar.h>
+	<libnova/lunar.h>
+	<libnova/mercury.h>
+	<libnova/venus.h>
+	<libnova/mars.h>
+	<libnova/jupiter.h>
+	<libnova/saturn.h>
+	<libnova/uranus.h>
+	<libnova/neptune.h>
+	<libnova/pluto.h>
+	<libnova/ln_types.h>
+	<libnova/julian_day.h>
+	<libnova/transform.h>
+	<libnova/utility.h>
+	<libnova/precession.h>
+	"conf.h"
+
+1759228173 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/sdl2utils.h
+	<SDL2/SDL.h>
+	<SDL2/SDL_thread.h>
+	<SDL2/SDL_ttf.h>
+
+1758982750 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/net.h
+	<stdio.h>
+	<arpa/inet.h>
+	<unistd.h>
+	<netdb.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<sys/socket.h>
+	<sys/ioctl.h>
+	"conf.h"
+
+1759176865 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/kpad.c
+	"kpad.h"
+
+1758982814 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/net.c
+	"net.h"
+
+1759172814 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/query.c
+	"query.h"
+
+1758982092 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/sdl2utils.c
+	"sdl2utils.h"
+	"kpad.h"
+

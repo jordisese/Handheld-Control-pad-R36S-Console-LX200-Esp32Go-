@@ -41,7 +41,7 @@
 
 
 #endif // K36S
-#define ESP_ADDRESS "192.168.1.57"
+#define ESP_ADDRESS "192.168.1.17"
 
 
 #endif

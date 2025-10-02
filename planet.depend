@@ -1,0 +1,112 @@
+# depslib dependency file v1.0
+1758017262 source:/home/angel/ROM/planet/main.c
+	<stdio.h>
+	<stdlib.h>
+
+1758188990 source:/home/angel/ROM/planet/planetasl.c
+	<SDL2/SDL.h>
+	<SDL2/SDL_ttf.h>
+	<libnova/solar.h>
+	<libnova/lunar.h>
+	<libnova/mercury.h>
+	<libnova/venus.h>
+	<libnova/mars.h>
+	<libnova/jupiter.h>
+	<libnova/saturn.h>
+	<libnova/uranus.h>
+	<libnova/neptune.h>
+	<libnova/pluto.h>
+	<libnova/ln_types.h>
+	<libnova/julian_day.h>
+	<libnova/transform.h>
+	<libnova/utility.h>
+	<stdio.h>
+	<stdbool.h>
+	<string.h>
+	<time.h>
+	"buttonmat.h"
+
+1758797591 /home/angel/ROM/planet/buttonmat.h
+	<SDL2/SDL.h>
+
+1758702372 source:/home/angel/ROM/planet/buttonmat.c
+	"buttonmat.h"
+
+1759231156 source:/home/angel/ROM/planet/esp32go.c
+	<stdio.h>
+	<stdbool.h>
+	<string.h>
+	<time.h>
+	"kpad.h"
+	"conf.h"
+	"query.h"
+	"sdl2utils.h"
+	"net.h"
+	<math.h>
+
+1758982814 source:/home/angel/ROM/planet/net.c
+	"net.h"
+
+1759073350 /home/angel/ROM/planet/conf.h
+
+1759172814 source:/home/angel/ROM/planet/query.c
+	"query.h"
+
+1759176023 /home/angel/ROM/planet/query.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<ctype.h>
+	"sqlite3.h"
+	<libnova/solar.h>
+	<libnova/lunar.h>
+	<libnova/mercury.h>
+	<libnova/venus.h>
+	<libnova/mars.h>
+	<libnova/jupiter.h>
+	<libnova/saturn.h>
+	<libnova/uranus.h>
+	<libnova/neptune.h>
+	<libnova/pluto.h>
+	<libnova/ln_types.h>
+	<libnova/julian_day.h>
+	<libnova/transform.h>
+	<libnova/utility.h>
+	<libnova/precession.h>
+	"conf.h"
+
+1758795281 source:/home/angel/ROM/planet/sdl2tools.c
+	"sdl2tools.h"
+
+1758797491 /home/angel/ROM/planet/sdl2tools.h
+	<SDL2/SDL.h>
+	<SDL2/SDL_thread.h>
+	<SDL2/SDL_ttf.h>
+
+1758982750 /home/angel/ROM/planet/net.h
+	<stdio.h>
+	<arpa/inet.h>
+	<unistd.h>
+	<netdb.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<sys/socket.h>
+	<sys/ioctl.h>
+	"conf.h"
+
+1759176865 source:/home/angel/ROM/planet/kpad.c
+	"kpad.h"
+
+1759075241 /home/angel/ROM/planet/kpad.h
+	<SDL2/SDL.h>
+
+1759228173 /home/angel/ROM/planet/sdl2utils.h
+	<SDL2/SDL.h>
+	<SDL2/SDL_thread.h>
+	<SDL2/SDL_ttf.h>
+
+1758982092 source:/home/angel/ROM/planet/sdl2utils.c
+	"sdl2utils.h"
+	"kpad.h"
+

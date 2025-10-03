@@ -7,7 +7,7 @@ const  char *labels[ROWS * COLS*4] =
     "Search", "4", "5","6","Clr",
     "Sync", "7", "8","9","+",
     "Track", ".", "0",":","-",
-    "Untrack","Home"," "," "," ",
+    "Untrack","Home","Connect","Close"," ",
 
     "Mode","Keyb", "Park","UnPark","Keyb",
     "GoTo","Sol","Mercurio","Venus","Luna",

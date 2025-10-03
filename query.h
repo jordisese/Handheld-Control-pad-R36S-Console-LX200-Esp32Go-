@@ -21,7 +21,7 @@
 #include <libnova/precession.h>
 #include "conf.h"
 //void squery(char* param,char* out, struct ln_equ_posn *pos);
-void squery(char* param,char* out,struct ln_equ_posn *pos,char table);
+int squery(char* param,char* out,struct ln_equ_posn *pos,char table);
 //void squery(char* param,char* out,struct ln_equ_posn *pos);
 int initDB();
 void closeDB();

@@ -12,8 +12,9 @@
 TTF_Font* font1;
 TTF_Font* font2;
 TTF_Font* font;
-//int sel_row = 0, sel_col = 0;
+char spd[10]="Slew";
 char buffp[200] =" ";
+char strlxcoord[256]=" ";
 char buff_alt[200] =" ";
 char buftarget[1024]=" ";
 extern MenuItem items[ROWS*COLS];
@@ -27,7 +28,7 @@ void draw_pad(SDL_Renderer *renderer,int sel_row,int sel_col,TTF_Font *font,Menu
 //--------------------------------------------
 void calcular_posicion(const char *nombre)
 {
-
+    static double altitude;
     struct ln_equ_posn pos;
 
     struct lnh_equ_posn hequ;
@@ -72,32 +73,74 @@ void calcular_posicion(const char *nombre)
     }
     else if (strcmp(nombre, "Search") == 0)
     {
-        printf("BUSQUEDA\n");
-        squery(inputbuffer,buffp,&pos,inputbuffer[0]);
+        // printf("BUSQUEDA\n");
+        if (squery(inputbuffer,buffp,&pos,inputbuffer[0])) printf("Found!\n");
+        else
+        {
+            printf("%s no found!\n",buffp);
+            return;
+        }
         //return;
     }
     else if (strcmp(nombre, "SearCh") == 0)
     {
         printf("BUSQUEDA\n");
+        if (squery(inputbuffer,buffp,&pos,'s')) printf("Found!\n");
+        else
+        {
+            printf("%s no found!\n",buffp);
+            return;
+        }
 
         squery(inputbuffer,buffp,&pos,'s');
         //return;
     }
     else if (strcmp(nombre, "GoTo") == 0)
     {
-        //  strcat(buffp,":MS#");(SDL_Color) {0xFF,0, 0, 255}
-        write(sockfd,buffp,sizeof(buffp));
-        write(sockfd,":MS#",4);
+        if (altitude>=0.0)
+        {
+            sendCmd(sockfd,strlxcoord);
+            sendCmd(sockfd,":MS#");
+            read(sockfd,temp,4);
+        }
+        else printf("Bajo el horizonte\n");
+        return;
+    }
+    else if (strcmp(nombre, "Sync") == 0)
+    {
+
+        sendCmd(sockfd,strlxcoord);
+        sendCmd(sockfd,":CM#");
         read(sockfd,temp,4);
         return;
     }
-     else if (strcmp(nombre, "Sync") == 0)
+    else if (strcmp(nombre, "Connect") == 0)
     {
-        //  strcat(buffp,":MS#");(SDL_Color) {0xFF,0, 0, 255}
-        write(sockfd,buffp,sizeof(buffp));
-        write(sockfd,":CM#",4);
-        read(sockfd,temp,4);
+        close(sockfd);
+        sockfd=initsock();
+        if (sockfd>=0)
+        {
+            //render_text( renderer, 20,240,(char*) ip(),font2,RED);
+            printf("%s\n",ip());
+        }
+        else
+        {
+            //render_text( renderer, 20,240,(char*) "Disconnected   ",font2,RED);
+            printf("%s\n","Disconnected");
+        }
+
+
         return;
+
+    }
+    else if (strcmp(nombre, "Close") == 0)
+    {
+        close(sockfd);
+
+        printf("%s\n","Disconnected");
+
+        return;
+
     }
     else if (strcmp(nombre, "NGC") == 0)
     {
@@ -118,23 +161,23 @@ void calcular_posicion(const char *nombre)
     }
     else if (strcmp(nombre, "Home") == 0)
     {
-        write(sockfd, ":pH#", 4);
+        sendCmd(sockfd, ":pH#");
         return;
 
     }
     else if (strcmp(nombre, "Park") == 0)
     {
-        write(sockfd, ":hP#", 4);
+        sendCmd(sockfd,":hP#");
         return;
     }
     else if (strcmp(nombre, "Track") == 0)
     {
-        write(sockfd, ":Qw#:Mt#", 8);
+        sendCmd(sockfd, ":Qw#:Mt#");
         return;
     }
     else if (strcmp(nombre, "Untrack") == 0)
     {
-        write(sockfd, ":Mh#", 4);
+        sendCmd(sockfd, ":Mh#");
         return;
     }
     else if (strcmp(nombre, "Mode") == 0)
@@ -170,21 +213,22 @@ void calcular_posicion(const char *nombre)
     }
 
     printf("%s - RA: %.4f h, DEC: %.4f°\n", nombre, pos.ra, pos.dec);
-    ln_get_equ_prec(&pos,2451545.0+9000.0,&pos);
+
+    ln_get_equ_prec(&pos,JD,&pos);
 
     ln_equ_to_hequ (&pos, &hequ);
-
     int sig=(hequ.dec.neg==1)? -1:1;
     ln_get_hrz_from_equ (&pos, &observer, JD, &hrz);
     sprintf(buftarget,"%s RA %02d:%02d:%02.0f Dec %+03d°%02d\'%02.0f  Az  %.4f  Alt %.4f    ",inputbuffer,
             hequ.ra.hours, hequ.ra.minutes, hequ.ra.seconds, sig * hequ.dec.degrees, hequ.dec.minutes, hequ.dec.seconds,fmod (hrz.az+180.0,360.0),hrz.alt);
 
-    sprintf(buffp,":Sr%02d:%02d:%02.0f#:Sd%+03d:%02d:%02.0f#",hequ.ra.hours,
+    sprintf(strlxcoord,":Sr%02d:%02d:%02.0f#:Sd%+03d:%02d:%02.0f#",hequ.ra.hours,
             hequ.ra.minutes, hequ.ra.seconds, sig *hequ.dec.degrees, hequ.dec.minutes, hequ.dec.seconds);
 
 
     //  sprintf (buff_alt,"Az  %.4f  Alt %.4f°    ",fmod (hrz.az+180.0,360.0),hrz.alt);
     printf ("Alt %f\n", hrz.alt);
+    altitude=hrz.alt;
 
 }
 //Thread function  for read esp32go  position and statusdata
@@ -216,9 +260,9 @@ int readsock(void *point)
                printf("alt %d read %d bytes from socket %d  %d\n",n++,sockfd,len,count);
               len=read_eq(sockfd,buf);
               printf("esp %d read %d bytes from socket %d  %d\n",n++,sockfd,len,count);*/
-
+            SDL_PushEvent(&user_event);
         }
-        SDL_PushEvent(&user_event);
+        //  SDL_PushEvent(&user_event);
         SDL_Delay(300);
     }
     return 0;
@@ -227,19 +271,21 @@ int readsock(void *point)
 //Default Screen update  only on SDL event  Updates
 
 void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
-{ int status =buf3[47]-48+buf3[48]-48;
-   const char state[50];
+{
+    int status =buf3[47]-48+buf3[48]-48;
+    const char state[50];
     //SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-   // sprintf(state,"%s %s %s" ,(status&1)?"Tracking":"Stop",(status&2)?"Parked":" ",(status&8)?"Slewing":" ");
-  if (status&8) strcpy(state,"Slewing") ;
-   else if (status&2) strcpy(state,"Parked");
-   else  strcpy(state,(status&1)? "Tracking":"Stop") ;
-  // sprintf(state,"%s " ,(status&1)?"Tracking":"Stop",(status&2)?"Parked":" ",(status&8)?"Slewing":" ");
+    // sprintf(state,"%s %s %s" ,(status&1)?"Tracking":"Stop",(status&2)?"Parked":" ",(status&8)?"Slewing":" ");
+    if (status&8) strcpy(state,"Slewing") ;
+    else if (status&2) strcpy(state,"Parked");
+    else  strcpy(state,(status&1)? "Tracking":"Stop") ;
+    // sprintf(state,"%s " ,(status&1)?"Tracking":"Stop",(status&2)?"Parked":" ",(status&8)?"Slewing":" ");
     SDL_RenderClear(renderer);
     draw_pad(renderer,sel_row,sel_col,font,items);
     render_text( renderer,10,240,(char* )buftarget, font2,ORANGE);//lx200 target
-    // render_text( renderer,10,240,(char* )buff_alt, font2,ORANGE);//lx200 target
+    render_text( renderer,10,220,(char* )buffp, font2,ORANGE);//lx200 target
+
     render_text(renderer,20,20,(char*) buf3,font1,RED); //ra
     render_text(renderer,20,90,(char*) buf3+11,font1,RED);//dec
     //render_text(renderer,550,150,(char*) buf3+47,font2,RED);
@@ -248,12 +294,13 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
     render_text(renderer,325,90,(char*) (buf3+35),font1,REDW);//alt
     SDL_Rect rect= {5,5,630,140};
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    render_text( renderer, 15,7,(char*) "Right ascension ",font2,RED);
-    render_text( renderer, 340,7,(char*) "Azimuth ",font2,RED);
-    render_text( renderer, 15,75,(char*) "Declination",font2,RED);
-    render_text( renderer, 340,75,(char*) "Altitude ",font2,RED);
+    render_text( renderer, 15,7,(char*) "Right ascension ",font2,WHITEL);
+    render_text( renderer, 340,7,(char*) "Azimuth ",font2,WHITEL);
+    render_text( renderer, 15,75,(char*) "Declination",font2,WHITEL);
+    render_text( renderer, 340,75,(char*) "Altitude ",font2,WHITEL);
     render_text( renderer, 10,140,"                 ",font1,RED);
-    if (strlen(inputbuffer)>0) render_text( renderer, 10,140,inputbuffer,font1,ORANGE);
+    render_text( renderer, 10,140,inputbuffer,font1,ORANGE);
+     render_text( renderer, 530,180,(char*)spd,font2,RED);
     // Draw the rectangle (filled)
     SDL_RenderDrawRect(renderer, &rect);
     rect.w = 630/2;
@@ -360,21 +407,21 @@ int main(int argc, char *argv[])
                     {
                     case NORTH_HAT: // Fn
 
-                        write(sockfd, ":Mn#", 4);
+                        sendCmd(sockfd,":Mn#");
                         break;
                     case SOUTH_HAT: // Start
-                        write(sockfd, ":Ms#", 4);
+                        sendCmd(sockfd,":Ms#");
 
                         break;
                     case WEST_HAT : // Fn
-                        write(sockfd, ":Mw#", 4);
+                        sendCmd(sockfd,":MW#");
                         break;
                     case EAST_HAT: // Start
-                        write(sockfd, ":Me#", 4);
+                        sendCmd(sockfd,":Me#");
 
                         break;
                     case 0: // Start
-                        write(sockfd, ":Qw#:Qn#", 8);
+                        sendCmd(sockfd,":Qw#:Qn#");
 
                         break;
                     }
@@ -404,32 +451,39 @@ int main(int argc, char *argv[])
                 case NORTH_BTN: // Fn
 
 
-                    write(sockfd, ":Mn#", 4);
+                    sendCmd(sockfd, ":Mn#");
                     break;
                 case SOUTH_BTN: // Start
-                    write(sockfd, ":Ms#", 4);
+                    sendCmd(sockfd, ":Ms#");
                     break;
                 case WEST_BTN: // Fn
-                    write(sockfd, ":Mw#", 4);
+                    sendCmd(sockfd, ":Mw#");
                     break;
                 case EAST_BTN: // Start
-                    write(sockfd, ":Me#", 4);
+                    sendCmd(sockfd, ":Me#");
                     break;
                 case GUIDE_BTN: // Start
-                    write(sockfd, ":RG#", 4);
-                    render_text( renderer,530,180,(char*) "GUIDE    ",font2,RED);
+                    sendCmd(sockfd, ":RG#");
+                    strcpy(spd,"GUIDE    ");
                     break;
                 case SLEW_BTN: // Start
-                    write(sockfd, ":RS#", 4);
-                    render_text( renderer, 530,180,(char*) "SLEW    ",font2,RED);
+                    sendCmd(sockfd, ":RS#");
+                    strcpy(spd,"SLEW     ");
+
                     break;
                 case CENTER_BTN: // Start
-                    write(sockfd, ":RC#", 4);
-                    render_text( renderer, 530,180,(char*) "CENTER ",font2,RED);
+                    sendCmd(sockfd, ":RC#");
+                    strcpy(spd,"CENTER    ");
+
                     break;
                 case FIND_BTN: // Start
-                    write(sockfd, ":RM#", 4);
-                    render_text( renderer, 530,180,(char*) "FIND      ",font2,RED);
+                    sendCmd(sockfd, ":RM#");
+                    strcpy(spd,"FIND    ");
+
+                    break;
+                case X_BTN: // Start
+                    inputbuffer[strlen(inputbuffer)-1]=0;
+
                     break;
                 case FN_BTN:
                     close(sockfd);
@@ -472,18 +526,19 @@ int main(int argc, char *argv[])
                 {
                 case NORTH_BTN: // Fn
 
-                    write(sockfd, ":Qn#", 4);
+                    sendCmd(sockfd, ":Qn#");
                     break;
                 case SOUTH_BTN: // Start
-                    write(sockfd, ":Qs#", 4);
+                    sendCmd(sockfd, ":Qs#");
 
                     break;
                 case WEST_BTN: // Fn
-                    write(sockfd, ":Qw#", 4);
+                    sendCmd(sockfd, ":Qw#");
                     break;
                 case EAST_BTN: // Start
-                    write(sockfd, ":Qe#", 4);
+                    sendCmd(sockfd, ":Qe#");
                     break;
+
                 case 13: // Start
                     // quit=SDL_TRUE;
                     break;
@@ -506,5 +561,6 @@ int main(int argc, char *argv[])
     SDL_DestroyWindow(window);
     TTF_Quit();
     SDL_Quit();
+    closeDB();
     return 0;
 }

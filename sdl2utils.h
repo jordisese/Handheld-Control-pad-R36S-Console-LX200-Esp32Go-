@@ -4,9 +4,10 @@
 #include <SDL2/SDL_ttf.h>
 //#include "kpad.h"
 #define  RED (SDL_Color) {0xFF,0, 0, 255}
-#define  REDW (SDL_Color) {0xd6,10, 106, 255}
-#define  ORANGE (SDL_Color) {0xFF,0x90, 0, 255}
+#define  REDW (SDL_Color) {0x00,100, 100, 255}
+#define  ORANGE (SDL_Color) {0xFF,0x60, 0, 255}
 #define  D_AMBER (SDL_Color) {0xFF,0xBF, 0, 255}
+#define  WHITEL (SDL_Color) {0x60,0x60, 0x60, 0}
 #define  BLACK (SDL_Color) {0x0,0x0, 0, 255}
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480

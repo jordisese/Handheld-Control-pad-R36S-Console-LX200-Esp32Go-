@@ -136,3 +136,10 @@ int read_altaz(int sockfd,char* buffer)
 }
 char* ip(void){
 return line;};
+
+int sendCmd(int sockfd, const  char* cmd)
+{
+int len=strlen(cmd);
+if (len>0)
+ write(sockfd, cmd,len );
+ }

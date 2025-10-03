@@ -2,7 +2,7 @@
 #include "kpad.h"
 //extern MenuItem items[ROWS][COLS];
 void render_text(SDL_Renderer *renderer, int x, int y, const char *text, TTF_Font *font,SDL_Color textColor)
-{
+{  if (strlen(text)==0) return;
     SDL_Color bgColor   = {0, 0, 0, 0};    // Black background
 
     SDL_Surface *surface = TTF_RenderUTF8_Shaded(font, text, textColor, bgColor);

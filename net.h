@@ -12,6 +12,7 @@
 int read_esp(int sockfd,char* buffer);
 int read_eq(int sockfd,char* buffer);
 int read_altaz(int sockfd,char* buffer);
+int sendCmd(int sockfd, const  char* cmd);
 int initsock();
 int readcc(void);
 char* ip(void);

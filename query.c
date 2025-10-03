@@ -9,15 +9,17 @@ void exit_with_error(sqlite3 *db, const char * msg)
     exit(1);
 }
 
-void squery(char* param,char* out,struct ln_equ_posn *pos,char table)
+int squery(char* param,char* out,struct ln_equ_posn *pos,char table)
 
 {
+    int result=0;
     char temp[60]="  ";
     printf("%s\n",temp);
     switch (table)
     {
     case ('s'):
-    {  param[0]=toupper(param[0]) ;
+    {
+        param[0]=toupper(param[0]) ;
         strcpy(temp,param);
         strcat(temp,"%");
         printf("%s\n",temp);
@@ -25,8 +27,9 @@ void squery(char* param,char* out,struct ln_equ_posn *pos,char table)
 
         while(SQLITE_ROW == sqlite3_step(stmt2))
         {
-            sprintf(out,"%s,%f,%f\n", sqlite3_column_text(stmt2, 2),sqlite3_column_double(stmt2, 0),sqlite3_column_double(stmt2,1));
-            printf("%s",out);
+            result=1;
+            sprintf(out,"%s,%f,%f", sqlite3_column_text(stmt2, 2),sqlite3_column_double(stmt2, 0),sqlite3_column_double(stmt2,1));
+            printf("%s\n",out);
             pos->ra=sqlite3_column_double(stmt2, 0)*15.0;
             pos->dec=sqlite3_column_double(stmt2, 1);
             strcpy(param,sqlite3_column_text(stmt2, 2));
@@ -35,6 +38,7 @@ void squery(char* param,char* out,struct ln_equ_posn *pos,char table)
         sqlite3_reset(stmt2) ;
     };
     break;
+     case 'I':
     case 'N':
     {
 
@@ -43,9 +47,10 @@ void squery(char* param,char* out,struct ln_equ_posn *pos,char table)
 
         while(SQLITE_ROW == sqlite3_step(stmt))
         {
-            sprintf(out,"%s,%f,%f,%s,%s\n", sqlite3_column_text(stmt, 0),sqlite3_column_double(stmt, 1),sqlite3_column_double(stmt, 2),
+            result=1;
+            sprintf(out,"%s,%f,%f,%s,%s", sqlite3_column_text(stmt, 0),sqlite3_column_double(stmt, 1),sqlite3_column_double(stmt, 2),
                     sqlite3_column_text(stmt, 4),sqlite3_column_text(stmt, 5));
-            printf("%s",out);
+            printf("%s\n",out);
             pos->ra=sqlite3_column_double(stmt, 1)*15.0;
             pos->dec=sqlite3_column_double(stmt, 2);
         }
@@ -60,16 +65,26 @@ void squery(char* param,char* out,struct ln_equ_posn *pos,char table)
 
         while(SQLITE_ROW == sqlite3_step(stmt1))
         {
-            sprintf(out,"%s,%f,%f,%s,%s\n", sqlite3_column_text(stmt1, 5),sqlite3_column_double(stmt1, 1),sqlite3_column_double(stmt1,2),
+            result=1;
+            sprintf(out,"%s,%f,%f,%s,%s", sqlite3_column_text(stmt1, 5),sqlite3_column_double(stmt1, 1),sqlite3_column_double(stmt1,2),
                     sqlite3_column_text(stmt1, 4),sqlite3_column_text(stmt1, 0));
-            printf("%s",out);
+            printf("%s\n",out);
             pos->ra=sqlite3_column_double(stmt1, 1)*15.0;
             pos->dec=sqlite3_column_double(stmt1, 2);
         }
         sqlite3_reset(stmt1) ;
     }
+    break;
+     default :
 
+     break;
     }
+    if (!result){ pos->ra=0;
+      pos->dec=0;
+      sprintf(out,"Object %s not found in DB",param);
+      printf("%s\n",out);
+    }
+    return result;
 
 }
 

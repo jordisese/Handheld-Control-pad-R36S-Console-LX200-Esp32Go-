@@ -35,6 +35,7 @@
 			<Add option="-lSDL2 -lSDL2_ttf -lGLEW -lGL -lnova -lm" />
 			<Add library="sqlite3" />
 		</Linker>
+		<Unit filename="conf.cfg" />
 		<Unit filename="conf.h" />
 		<Unit filename="esp32go.c">
 			<Option compilerVar="CC" />

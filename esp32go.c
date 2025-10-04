@@ -323,8 +323,8 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
     if (eqmode=='P')
     {
         render_text(renderer,320,20,(char*) str_az,font1,REDW);//az
-        render_text(renderer,325,90,(char*) str_alt,font1,REDW);
-    }//alt
+        render_text(renderer,325,90,(char*) str_alt,font1,REDW);//alt
+    }
     else
     {
         render_text(renderer,340,20,(char*) (buf3+23),font1,REDW);//az

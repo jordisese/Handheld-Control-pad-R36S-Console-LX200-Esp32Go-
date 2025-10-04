@@ -110,7 +110,7 @@
 	"sdl2utils.h"
 	"kpad.h"
 
-1759594841 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/esp32go.c
+1759594930 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/esp32go.c
 	<stdio.h>
 	<stdbool.h>
 	<string.h>

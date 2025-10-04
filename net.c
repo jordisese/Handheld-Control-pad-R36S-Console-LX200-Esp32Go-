@@ -1,11 +1,15 @@
 #include "net.h"
+#include <stdlib.h>
 #define PORT 10001
 char  line[30] = ESP_ADDRESS;
-
+extern double lat,lng;
+extern struct ln_lnlat_posn observer;
+extern char eqmode;
 int readcc(void)
 {
+    double a,b;
     FILE * fp;
-    //  char * line = NULL;
+    char c = 'P';
     //  size_t len = 0;
     //  ssize_t read;
 #ifdef K36S
@@ -19,8 +23,14 @@ int readcc(void)
 
 
     fgets(line,sizeof(line),fp);
-    printf("%s", line);
+    fscanf(fp, "%lf %lf %c", &a, &b,&c);
+    printf("%s %lf %lf  %c\n", line,a,b,c);
+    observer.lng=a;
+    observer.lat=b;
+    eqmode=c;
+
     fclose(fp);
+
     //  if (line)
 //       free(line);
     // exit(EXIT_SUCCESS);
@@ -57,10 +67,12 @@ int initsock()
     {
         printf("connection with the server failed...\n");
         //exit(0);
+
     }
     else
     {
         printf("connected to the server..\n");
+        read_geo(sockfd);
     }
 
     return sockfd;
@@ -72,7 +84,7 @@ int read_esp(int sockfd,char* buffer)
 
     write(sockfd, buffx, sizeof(buffx));
     int len = read(sockfd,buffx,99);
-    if (len==49)
+    if (len==GX_SIZE)
 
     {
         //printf("%s\n",buffx);
@@ -134,12 +146,46 @@ int read_altaz(int sockfd,char* buffer)
     return len;
 
 }
-char* ip(void){
-return line;};
+char* ip(void)
+{
+    return line;
+};
 
 int sendCmd(int sockfd, const  char* cmd)
 {
-int len=strlen(cmd);
-if (len>0)
- write(sockfd, cmd,len );
- }
+    int len=strlen(cmd);
+    if (len>0)
+        write(sockfd, cmd,len );
+    return len;
+}
+
+
+int read_geo(int sockfd)
+{
+    char buffer[20];
+    sprintf(buffer,":Gg#:Gt#%c",0x06);
+    sendCmd(sockfd,buffer);
+    int count=read(sockfd,buffer,16);
+    if ((count==16)&& (buffer[14]=='#'))
+    {
+        buffer[4]=0;
+        double lng=atof(buffer+1);
+        buffer[7]=0;
+        double min=roundf((atof(buffer+5)*10)/6.0);
+        lng=((buffer[0]=='+')? -1.0:1.0)*(lng+min/100);
+
+        printf("longitude %lf\n",lng);
+
+        buffer[11]=0;
+        double lat=atof(buffer+9);
+        buffer[14]=0;
+        min=roundf((atof(buffer+12)*10.0)/6.0);
+        lat=((buffer[8]=='+')? 1.0:-1.0)*(lat+min/100);
+        printf("latitude %lf %c\n",lat, buffer[15]);
+        eqmode=buffer[15];
+        observer.lng=lng;
+        observer.lat=lat;
+        return 1;
+    }
+    return 0;
+}

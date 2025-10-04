@@ -12,16 +12,26 @@
 TTF_Font* font1;
 TTF_Font* font2;
 TTF_Font* font;
-char spd[10]="Slew";
+char spd[20]="Slew";
 char buffp[200] =" ";
 char strlxcoord[256]=" ";
 char buff_alt[200] =" ";
 char buftarget[1024]=" ";
+char str_ra[40];
+char str_dec[40];
+char str_az[40];
+char str_alt[40];
+
 extern MenuItem items[ROWS*COLS];
 uintptr_t sockfd;
 char buf[1024]=" ";
 char buf3[1024]=" ";
 char inputbuffer[200]="NGC1980";
+//double lat =36.72 ;
+//double lng= -4.12;
+double ra,dec;
+struct ln_lnlat_posn observer= {-4.12,36.72};
+char eqmode='P';
 //Prototypes not declared on Headers
 void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col) ;
 void draw_pad(SDL_Renderer *renderer,int sel_row,int sel_col,TTF_Font *font,MenuItem *items);
@@ -30,17 +40,10 @@ void calcular_posicion(const char *nombre)
 {
     static double altitude;
     struct ln_equ_posn pos;
-
     struct lnh_equ_posn hequ;
-
-    struct ln_lnlat_posn observer;
     struct ln_hrz_posn hrz;
     char temp[100]="   ";
-
-    observer.lat = 36.72; /* 55.92 N */
-    observer.lng = -4.12; /* 3.18 W rintf(out);*/
     double JD = ln_get_julian_from_sys();
-
     if (strcmp(nombre, "Sol") == 0)
         ln_get_solar_equ_coords(JD, &pos);
     else if (strcmp(nombre, "Mercurio") == 0)
@@ -122,6 +125,7 @@ void calcular_posicion(const char *nombre)
         {
             //render_text( renderer, 20,240,(char*) ip(),font2,RED);
             printf("%s\n",ip());
+            read_geo(sockfd);
         }
         else
         {
@@ -244,6 +248,10 @@ int readsock(void *point)
     int *sockf= point;
     int sockfd=(uintptr_t) sockf;
     int count;
+    struct lnh_equ_posn hequ;
+    struct ln_hrz_posn hrz;
+    struct ln_equ_posn pos;
+    struct lnh_hrz_posn hpos;
 
     // int n=0;
     int len=0;
@@ -253,17 +261,38 @@ int readsock(void *point)
         read(sockfd,buf,count);
         // read(sockfd,buf,100);
         len = read_esp(sockfd,buf3);
-        if (len>0)
+        if (len==GX_SIZE)
         {
-            //  printf("esp %d read %d bytes from socket %d  %d\n",n++,len,sockfd,count);
-            /*  len=read_altaz(sockfd,bufde);
-               printf("alt %d read %d bytes from socket %d  %d\n",n++,sockfd,len,count);
-              len=read_eq(sockfd,buf);
-              printf("esp %d read %d bytes from socket %d  %d\n",n++,sockfd,len,count);*/
+            hequ.ra.hours= (buf3[0]-48)*10+(buf3[1]-48);
+            hequ.ra.minutes=(buf3[3]-48)*10+(buf3[4]-48);
+            hequ.ra.seconds=(buf3[6]-48)*10.0+(buf3[7]-48)+(buf3[9]-48)*0.1;
+            //ra=hour*3600.0+min*60.0+sec;
+            //  printf("ra %d %d %.1lf  \n",hequ.ra.hours,hequ.ra.minutes,hequ.ra.seconds);
+            sprintf(str_ra,"%02d:%02d:%04.1lf",hequ.ra.hours,hequ.ra.minutes,hequ.ra.seconds);
+            hequ.dec.neg=(buf3[11]=='-')?1:0;
+            hequ.dec.degrees= (buf3[12]-48)*10+(buf3[13]-48);
+            hequ.dec.minutes=(buf3[16]-48)*10+(buf3[17]-48);
+            hequ.dec.seconds=(buf3[19]-48)*10.0+(buf3[20]-48);
+            //dec=sg *(deg*3600.0+mind*60.0+secd);
+            //printf("dec %d %d %.0lf \n", hequ.dec.degrees,hequ.dec.minutes, hequ.dec.seconds);
+            sprintf(str_dec,"%c%02d°%02d'%02.0lf\"",(hequ.dec.neg<<1)+'+',hequ.dec.degrees,hequ.dec.minutes, hequ.dec.seconds);
+            ln_hequ_to_equ(&hequ,&pos);
+            double JD = ln_get_julian_from_sys();
+            ln_get_hrz_from_equ (&pos, &observer, JD, &hrz);
+            // printf (" az  %.04f Alt %.04f\n",fmod (hrz.az+180.0,360.0), hrz.alt);
+            hrz.az=fmod (hrz.az+180.0,360.0);
+            ln_hrz_to_hhrz(&hrz,&hpos);
+            sprintf(str_az,"%+03d°%02d'%02.0lf\"",hpos.az.degrees,hpos.az.minutes,hpos.az.seconds);
+            sprintf(str_alt,"%c%02d°%02d'%02.0lf\"",(hpos.alt.neg<<1) +'+',hpos.alt.degrees,hpos.alt.minutes,hpos.alt.seconds);
+            sprintf(buff_alt,"%+03d°%02d'%02.0lf\" alt %c%02d°%02d'%02.0lf",hpos.az.degrees,hpos.az.minutes,hpos.az.seconds,(hpos.alt.neg<<1) +'+'
+                    ,hpos.alt.degrees,hpos.alt.minutes,hpos.alt.seconds);
+            //printf("%s\n",buff_alt);
+
+
             SDL_PushEvent(&user_event);
         }
         //  SDL_PushEvent(&user_event);
-        SDL_Delay(300);
+        SDL_Delay(1000);
     }
     return 0;
 }
@@ -286,12 +315,31 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
     render_text( renderer,10,240,(char* )buftarget, font2,ORANGE);//lx200 target
     render_text( renderer,10,220,(char* )buffp, font2,ORANGE);//lx200 target
 
-    render_text(renderer,20,20,(char*) buf3,font1,RED); //ra
-    render_text(renderer,20,90,(char*) buf3+11,font1,RED);//dec
-    //render_text(renderer,550,150,(char*) buf3+47,font2,RED);
+
+    render_text(renderer,20,20,(char*) str_ra,font1,RED); //ra
+    render_text(renderer,20,90,(char*) str_dec,font1,RED);//dec
+
     render_text(renderer,500,150,(char*) state,font2,RED);
-    render_text(renderer,340,20,(char*) (buf3+23),font1,REDW);//az
-    render_text(renderer,325,90,(char*) (buf3+35),font1,REDW);//alt
+    if (eqmode=='P')
+    {
+        render_text(renderer,320,20,(char*) str_az,font1,REDW);//az
+        render_text(renderer,325,90,(char*) str_alt,font1,REDW);
+    }//alt
+    else
+    {
+        render_text(renderer,340,20,(char*) (buf3+23),font1,REDW);//az
+        render_text(renderer,325,90,(char*) (buf3+35),font1,REDW);//alt
+        // render_text(renderer,325,150,(char*) buff_alt,font2,REDW);//alt
+    }
+    // render_text(renderer,550,150,(char*) buf3+47,font2,RED);
+
+    //  render_text(renderer,20,20,(char*) buf3,font1,RED); //ra
+    //render_text(renderer,20,90,(char*) buf3+11,font1,RED);//dec
+
+    // render_text(renderer,340,20,(char*) (buf3+23),font1,REDW);//az
+    // render_text(renderer,325,90,(char*) (buf3+35),font1,REDW);//alt
+    // render_text(renderer,325,150,(char*) buff_alt,font2,REDW);//alt
+
     SDL_Rect rect= {5,5,630,140};
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     render_text( renderer, 15,7,(char*) "Right ascension ",font2,WHITEL);
@@ -300,7 +348,7 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
     render_text( renderer, 340,75,(char*) "Altitude ",font2,WHITEL);
     render_text( renderer, 10,140,"                 ",font1,RED);
     render_text( renderer, 10,140,inputbuffer,font1,ORANGE);
-     render_text( renderer, 530,180,(char*)spd,font2,RED);
+    render_text( renderer, 530,180,(char*)spd,font2,RED);
     // Draw the rectangle (filled)
     SDL_RenderDrawRect(renderer, &rect);
     rect.w = 630/2;
@@ -343,21 +391,21 @@ int main(int argc, char *argv[])
                                           SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                           WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    font = TTF_OpenFont("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 26);
+    font = TTF_OpenFont(DVSANSBOLD, 26);
     if (!font)
     {
         printf("[ERROR] TTF_OpenFont() Failed with: %s\n", TTF_GetError());
         return 1;
     }
 
-    font1 = TTF_OpenFont("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 48);
+    font1 = TTF_OpenFont(DVSANSBOLD, 48);
 
     if (!font)
     {
         printf("[ERROR] TTF_OpenFont() Failed with: %s\n", TTF_GetError());
         exit(2);
     }
-    font2 = TTF_OpenFont("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 16);
+    font2 = TTF_OpenFont(DVSANSBOLD, 16);
 
     if (!font2)
     {

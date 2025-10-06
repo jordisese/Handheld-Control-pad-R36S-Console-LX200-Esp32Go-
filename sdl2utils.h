@@ -15,5 +15,6 @@
 
 void render_text(SDL_Renderer *renderer, int x, int y, const char *text, TTF_Font *font,SDL_Color textColor);
 void draw_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Color color, SDL_Rect rect);
+void init_fonts(void);
 //void draw_pad(SDL_Renderer *renderer,int sel_row,int sel_col,TTF_Font *font,MenuItem *items);
 #endif

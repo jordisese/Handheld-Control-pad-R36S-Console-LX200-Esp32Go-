@@ -26,7 +26,7 @@ extern MenuItem items[ROWS*COLS];
 uintptr_t sockfd;
 char buf[1024]=" ";
 char buf3[1024]=" ";
-char inputbuffer[200]="NGC1980";
+char inputbuffer[200]="M1";
 //double lat =36.72 ;
 //double lng= -4.12;
 double ra,dec;
@@ -66,7 +66,8 @@ void calcular_posicion(const char *nombre)
         ln_get_pluto_equ_coords(JD, &pos);
     else if (strcmp(nombre, "<-") == 0)
     {
-        inputbuffer[strlen(inputbuffer)-1]=0;
+        if (strlen(inputbuffer)<0)
+            inputbuffer[strlen(inputbuffer)-1]=0;
         return;
     }
     else if (strcmp(nombre, "Clr") == 0)
@@ -76,27 +77,30 @@ void calcular_posicion(const char *nombre)
     }
     else if (strcmp(nombre, "Search") == 0)
     {
-        // printf("BUSQUEDA\n");
         if (squery(inputbuffer,buffp,&pos,inputbuffer[0])) printf("Found!\n");
         else
         {
-            printf("%s no found!\n",buffp);
+            printf("%s not found!\n",buffp);
             return;
         }
-        //return;
+        // return;
     }
     else if (strcmp(nombre, "SearCh") == 0)
     {
-        printf("BUSQUEDA\n");
-        if (squery(inputbuffer,buffp,&pos,'s')) printf("Found!\n");
+        printf("Search\n");
+        char * ptr;
+       int    ch = ' ';
+
+    ptr = strchr(inputbuffer, ch );
+    ch=(ptr==NULL)? 's':'f';
+        if (squery(inputbuffer,buffp,&pos,ch)) printf("Found!\n");
         else
         {
-            printf("%s no found!\n",buffp);
+            printf("%s not found!\n",buffp);
             return;
         }
 
-        squery(inputbuffer,buffp,&pos,'s');
-        //return;
+
     }
     else if (strcmp(nombre, "GoTo") == 0)
     {
@@ -169,6 +173,37 @@ void calcular_posicion(const char *nombre)
         return;
 
     }
+      else if (strcmp(nombre, "West") == 0)
+    {
+        sendCmd(sockfd, ":hH3#");
+        return;
+
+    }
+          else if (strcmp(nombre, "East") == 0)
+    {
+        sendCmd(sockfd, ":hH2#");
+        return;
+
+    }
+             else if (strcmp(nombre, "SetHome") == 0)
+    {
+        sendCmd(sockfd, ":hH2#");
+        return;
+
+    }
+           else if (strcmp(nombre, "Zenith") == 0)
+    {
+        sendCmd(sockfd, ":hH1#");
+        return;
+
+    }
+
+      else if (strcmp(nombre, "NCP") == 0)
+    {
+        sendCmd(sockfd, ":hH0#");
+        return;
+
+    }
     else if (strcmp(nombre, "Park") == 0)
     {
         sendCmd(sockfd,":hP#");
@@ -194,26 +229,42 @@ void calcular_posicion(const char *nombre)
         changemat(1,items);
         return;
     }
-    else if (strcmp(nombre, "Keyb") == 0)
+    else if (strcmp(nombre, "Stars") == 0)
     {
         changemat(2,items);
         return;
     }
-    else if (strcmp(nombre, "Shift") == 0)
+    else if (strcmp(nombre, "Align") == 0)
     {
         changemat(3,items);
         return;
     }
-    else if (strcmp(nombre, "Ceres") == 0)
+       else if (strcmp(nombre, "AlignC") == 0)
     {
-        // int sel_row = 0, sel_col = 0;
-        printf("Ceres no está en libnova directamente.\n");
+        changemat(4,items);
         return;
     }
+
     else
-    {
+    {  char * ptr;
+       int    ch = ' ';
+
+    ptr = strchr(nombre, ch );
+    ch=(ptr==NULL)? 's':'f';
+
         printf("No calculable: %s\n", nombre);
-        return;
+       // return;
+        printf("Search %c \n",ch);
+        strcpy(inputbuffer,nombre);
+        if (squery(inputbuffer,buffp,&pos,ch)) printf("Found!\n");
+        else
+        {
+            printf("%s not found!\n",buffp);
+            return;
+        }
+
+
+
     }
 
     printf("%s - RA: %.4f h, DEC: %.4f°\n", nombre, pos.ra, pos.dec);
@@ -235,7 +286,7 @@ void calcular_posicion(const char *nombre)
     altitude=hrz.alt;
 
 }
-//Thread function  for read esp32go  position and statusdata
+//Thread function  for read esp32go  position and status data
 int readsock(void *point)
 {
     SDL_Event user_event;
@@ -284,8 +335,8 @@ int readsock(void *point)
             ln_hrz_to_hhrz(&hrz,&hpos);
             sprintf(str_az,"%+03d°%02d'%02.0lf\"",hpos.az.degrees,hpos.az.minutes,hpos.az.seconds);
             sprintf(str_alt,"%c%02d°%02d'%02.0lf\"",(hpos.alt.neg<<1) +'+',hpos.alt.degrees,hpos.alt.minutes,hpos.alt.seconds);
-            sprintf(buff_alt,"%+03d°%02d'%02.0lf\" alt %c%02d°%02d'%02.0lf",hpos.az.degrees,hpos.az.minutes,hpos.az.seconds,(hpos.alt.neg<<1) +'+'
-                    ,hpos.alt.degrees,hpos.alt.minutes,hpos.alt.seconds);
+            sprintf(buff_alt,"%+03d°%02d'%02.0lf\" alt %c%02d°%02d'%02.0lf",hpos.az.degrees,hpos.az.minutes,hpos.az.seconds,
+                    (hpos.alt.neg<<1) +'+',hpos.alt.degrees,hpos.alt.minutes,hpos.alt.seconds);
             //printf("%s\n",buff_alt);
 
 
@@ -315,11 +366,11 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
     render_text( renderer,10,240,(char* )buftarget, font2,ORANGE);//lx200 target
     render_text( renderer,10,220,(char* )buffp, font2,ORANGE);//lx200 target
 
-
     render_text(renderer,20,20,(char*) str_ra,font1,RED); //ra
     render_text(renderer,20,90,(char*) str_dec,font1,RED);//dec
 
-    render_text(renderer,500,150,(char*) state,font2,RED);
+    render_text(renderer,550,150,(char*) state,font2,RED);
+    render_text( renderer,550,170,(char*)spd,font2,RED);
     if (eqmode=='P')
     {
         render_text(renderer,320,20,(char*) str_az,font1,REDW);//az
@@ -329,7 +380,7 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
     {
         render_text(renderer,340,20,(char*) (buf3+23),font1,REDW);//az
         render_text(renderer,325,90,(char*) (buf3+35),font1,REDW);//alt
-        // render_text(renderer,325,150,(char*) buff_alt,font2,REDW);//alt
+        //render_text(renderer,325,150,(char*) buff_alt,font2,REDW);//alt
     }
     // render_text(renderer,550,150,(char*) buf3+47,font2,RED);
 
@@ -348,10 +399,10 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
     render_text( renderer, 340,75,(char*) "Altitude ",font2,WHITEL);
     render_text( renderer, 10,140,"                 ",font1,RED);
     render_text( renderer, 10,140,inputbuffer,font1,ORANGE);
-    render_text( renderer, 530,180,(char*)spd,font2,RED);
+
     // Draw the rectangle (filled)
     SDL_RenderDrawRect(renderer, &rect);
-    rect.w = 630/2;
+    rect.w = 640/2;
     SDL_RenderDrawRect(renderer, &rect);
     rect= (SDL_Rect)
     {
@@ -367,7 +418,6 @@ int main(int argc, char *argv[])
     printf("argc is %d\n",argc == 2);
     for(i=0; i<argc; i++)
         printf("argv[%d] is %s\n",i,argv[i]);
-//printf("argv[%d] is %s\n",i,getcwd());
 
     initDB();
 
@@ -391,28 +441,8 @@ int main(int argc, char *argv[])
                                           SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                           WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    font = TTF_OpenFont(DVSANSBOLD, 26);
-    if (!font)
-    {
-        printf("[ERROR] TTF_OpenFont() Failed with: %s\n", TTF_GetError());
-        return 1;
-    }
+    init_fonts();
 
-    font1 = TTF_OpenFont(DVSANSBOLD, 48);
-
-    if (!font)
-    {
-        printf("[ERROR] TTF_OpenFont() Failed with: %s\n", TTF_GetError());
-        exit(2);
-    }
-    font2 = TTF_OpenFont(DVSANSBOLD, 16);
-
-    if (!font2)
-    {
-        printf("[ERROR] TTF_OpenFont() Failed with: %s\n", TTF_GetError());
-        exit(2);
-    }
-    //  init_mat();
     init_mat(items);
 
     int sel_row = 0, sel_col = 0;
@@ -436,9 +466,9 @@ int main(int argc, char *argv[])
     {
         render_text( renderer, 20,200,(char*) "Disconnected",font2,RED);
     }
-    //int h,v,n;
 
 
+    calcular_posicion("Search");
 
     //unsigned int cn=0;
 
@@ -453,22 +483,21 @@ int main(int argc, char *argv[])
                 switch(e.jhat.value)
                 {
                     {
-                    case NORTH_HAT: // Fn
-
+                    case NORTH_HAT: // Move North
                         sendCmd(sockfd,":Mn#");
                         break;
-                    case SOUTH_HAT: // Start
+                    case SOUTH_HAT: // Move South
                         sendCmd(sockfd,":Ms#");
 
                         break;
-                    case WEST_HAT : // Fn
-                        sendCmd(sockfd,":MW#");
+                    case WEST_HAT : // Move West
+                        sendCmd(sockfd,":Mw#");
                         break;
-                    case EAST_HAT: // Start
+                    case EAST_HAT: // Move East
                         sendCmd(sockfd,":Me#");
 
                         break;
-                    case 0: // Start
+                    case 0: // Stop
                         sendCmd(sockfd,":Qw#:Qn#");
 
                         break;
@@ -497,7 +526,6 @@ int main(int argc, char *argv[])
                 switch(e.jbutton.button)
                 {
                 case NORTH_BTN: // Fn
-
 
                     sendCmd(sockfd, ":Mn#");
                     break;
@@ -572,18 +600,18 @@ int main(int argc, char *argv[])
             {
                 switch(e.jbutton.button)
                 {
-                case NORTH_BTN: // Fn
+                case NORTH_BTN: //stop N
 
                     sendCmd(sockfd, ":Qn#");
                     break;
-                case SOUTH_BTN: // Start
+                case SOUTH_BTN: // stop S
                     sendCmd(sockfd, ":Qs#");
 
                     break;
-                case WEST_BTN: // Fn
+                case WEST_BTN: // stop W
                     sendCmd(sockfd, ":Qw#");
                     break;
-                case EAST_BTN: // Start
+                case EAST_BTN: // Sstop E
                     sendCmd(sockfd, ":Qe#");
                     break;
 
@@ -599,7 +627,7 @@ int main(int argc, char *argv[])
             else if (e.type == SDL_USEREVENT) ;//printf("User event %d\r\n",e.user.code);
 
         }
-        drawMainScreen(renderer,sel_row,sel_col); //SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
+        drawMainScreen(renderer,sel_row,sel_col);
 
     }
 

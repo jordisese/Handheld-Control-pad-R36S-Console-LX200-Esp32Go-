@@ -1,41 +1,61 @@
 #include "kpad.h"
 
-const  char *labels[ROWS * COLS*4] =
+const  char *labels[ROWS * COLS*5] =
 {
-    "Planets","Messier", "NGC","IC","Keyb",
+    "Planets","Messier", "NGC","IC","Stars",
     "GoTo","1","2","3","<-",
     "Search", "4", "5","6","Clr",
     "Sync", "7", "8","9","+",
     "Track", ".", "0",":","-",
-    "Untrack","Home","Connect","Close"," ",
+    "Untrack","Home","Connect","Close","Align",
 
-    "Mode","Keyb", "Park","UnPark","Keyb",
+    "Mode","Stars", "Park","UnPark","Alignc",
     "GoTo","Sol","Mercurio","Venus","Luna",
     "Sync", "Marte", "Jupiter","Saturno","Urano",
     "Halt", "Neptuno","Pluton","+"," ",
     "Track", "East","West","NCP","South",
-    "UnTrack","Zenith","MW","ME"," ",
+    "Untrack","Zenith","Home","SetHome","Align",
 
     "Mode","a","b","c","d",
     "SearCh","e","f","g","h",
     "Clr","i","j","k","l",
-    "Shift","m","n","o","p",
-    "<-","q","r","s","t",
-    "u","v","x","y","z",
+    " ","m","n","o","p",
+    "q","r","s","t","u",
+    "w","v","x","y","z",
 
-    "Mode","A","B","C","D",
+    "Mode","Alp Umi","Alp Tau","Bet Ori","Alp AUR",
+    "Star1","Alp Ori","Alp Cmi","Alp Gem","Alp CMI",
+    "Star2","Bet Gem","Alp Leo","Alp Vir","Alp BOO",
+    "Sync","Alp Sco","Alp Lyr","Alp Aql","Apl Cyg",
+    "Reset","Alp Psa","Al","T","W",
+    "AlignC","V","X","Y","Z",
+
+     "Mode","Polaris","Aldebaran","Rigel","Capella",
+    "Star1","Betelgeuse","Procion","Castor","Procyon",
+    "Star2","Pollux","Regulus","Spica","Arcturus",
+    "Sync","Antares","Vega","Altair","Deneb",
+    "Reset","FomalHaut","AChenar","T","W",
+    "U","V","X","Y","Z",
+
+    };
+
+ /*   "Mode","A","B","C","D",
     "SearCh","E","F","G","h",
     "Keyb","I","J","K","L",
     "Clr","M","N","0","P",
-    "<-","Q","R","S","T",
+    "Q","R","S","T","W",
     "U","V","X","Y","Z",
 
+"A UMI","A TAU","B ORI","A AUR",
+"A ORI","A CMA","A GEM","A CMI",
+"B GEM","A LEO","A VIR","A BOO",
+"A SCO","A LYR","A AQL","A CYG",
+"A PSA
 
 
 
 
-
-};
+};*/
 
 MenuItem items[ROWS*COLS];
 

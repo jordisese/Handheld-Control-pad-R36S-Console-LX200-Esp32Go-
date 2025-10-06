@@ -1,8 +1,13 @@
 #include "sdl2utils.h"
 #include "kpad.h"
-//extern MenuItem items[ROWS][COLS];
+#include "conf.h"
+extern TTF_Font* font1;
+extern TTF_Font* font2;
+extern TTF_Font* font;
+
 void render_text(SDL_Renderer *renderer, int x, int y, const char *text, TTF_Font *font,SDL_Color textColor)
-{  if (strlen(text)==0) return;
+{
+    if (strlen(text)==0) return;
     SDL_Color bgColor   = {0, 0, 0, 0};    // Black background
 
     SDL_Surface *surface = TTF_RenderUTF8_Shaded(font, text, textColor, bgColor);
@@ -45,13 +50,15 @@ void draw_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Col
 
 
 void draw_pad(SDL_Renderer *renderer,int sel_row,int sel_col,TTF_Font *font,MenuItem *items)
-{ //MenuItem* items[ROWS][COLS];
+{
+    //MenuItem* items[ROWS][COLS];
 //items[0][0]=itemsp;
     SDL_Color white = {255,0,0,255};
     for (int r = 0; r < ROWS; r++)
     {
         for (int c = 0; c < COLS; c++)
-        { int index=r*COLS+c;
+        {
+            int index=r*COLS+c;
             if (index==sel_row*COLS+sel_col)
             {
                 white=BLACK;
@@ -66,6 +73,34 @@ void draw_pad(SDL_Renderer *renderer,int sel_row,int sel_col,TTF_Font *font,Menu
             draw_text(renderer, font, items[index].label, white, items[index].rect);
 
         }
+    }
+}
+
+void init_fonts(void)
+{
+
+    font = TTF_OpenFont(DVSANSBOLD, 24);
+    if (!font)
+    {
+        printf("[ERROR] TTF_OpenFont() Failed with: %s\n", TTF_GetError());
+        return ;
+    }
+
+    font1 = TTF_OpenFont(DVSANSBOLD, 48);
+
+    if (!font)
+    {
+        printf("[ERROR] TTF_OpenFont() Failed with: %s\n", TTF_GetError());
+        return ;
+
+    }
+    font2 = TTF_OpenFont(DVSANSBOLD, 16);
+
+    if (!font2)
+    {
+        printf("[ERROR] TTF_OpenFont() Failed with: %s\n", TTF_GetError());
+        return ;
+
     }
 }
 

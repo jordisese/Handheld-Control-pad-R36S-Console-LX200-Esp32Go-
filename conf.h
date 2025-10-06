@@ -2,13 +2,13 @@
 //#define K36S
 #define NORTH_BTN 14
 #define SOUTH_BTN 15
-#define WEST_BTN 16
-#define EAST_BTN 17
+#define WEST_BTN 17
+#define EAST_BTN 16
 
 #define NORTH_HAT 1
 #define SOUTH_HAT 4
-#define WEST_HAT 8
-#define EAST_HAT 2
+#define WEST_HAT 2
+#define EAST_HAT 8
 #define GUIDE_BTN 4
 #define CENTER_BTN 6
 #define SLEW_BTN 5

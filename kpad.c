@@ -1,50 +1,49 @@
 #include "kpad.h"
-
+#include "labels.h"
 const  char *labels[ROWS * COLS*5] =
 {
-    "Planets","Messier", "NGC","IC","Stars",
-    "GoTo","1","2","3","<-",
-    "Search", "4", "5","6","Clr",
-    "Sync", "7", "8","9","+",
-    "Track", ".", "0",":","-",
-    "Untrack","Home","Connect","Close","Align",
+    PLANETS,"Messier", "NGC","IC",STARS,
+    GOTO,"1","2","3",B_DEL,
+    SEARCH, "4", "5","6",CLEAR,
+    SYNC, "7", "8","9","+",
+    TRACK, ".", "0",":","-",
+    UNTRACK,HOME,CONNECT,CLOSE_CONN,ALING,
 
-    "Mode","Stars", "Park","UnPark","Alignc",
-    "GoTo","Sol","Mercurio","Venus","Luna",
-    "Sync", "Marte", "Jupiter","Saturno","Urano",
-    "Halt", "Neptuno","Pluton","+"," ",
-    "Track", "East","West","NCP","South",
-    "Untrack","Zenith","Home","SetHome","Align",
+    MODE,STARS, PARK,UNPARK,ALINGC,
+    GOTO,SUN,MERCURY,VENUS,MOON,
+    SYNC, MARS, JUPITER,SATURN,URANUS,
+    "Halt",NEPTUNE,PLUTO," "," ",
+    TRACK, EAST,WEST,N_POLE,SOUTH,
+    UNTRACK,ZENITH,HOME,SETHOME,ALING,
 
-    "Mode","a","b","c","d",
-    "SearCh","e","f","g","h",
-    "Clr","i","j","k","l",
+    MODE,"a","b","c","d",
+    SEARCHST,"e","f","g","h",
+    CLEAR,"i","j","k","l",
     " ","m","n","o","p",
     "q","r","s","t","u",
     "w","v","x","y","z",
 
-    "Mode","Alp Umi","Alp Tau","Bet Ori","Alp AUR",
-    "Star1","Alp Ori","Alp Cmi","Alp Gem","Alp CMI",
-    "Star2","Bet Gem","Alp Leo","Alp Vir","Alp BOO",
-    "Sync","Alp Sco","Alp Lyr","Alp Aql","Apl Cyg",
-    "Reset","Alp Psa","Al","T","W",
-    "AlignC","V","X","Y","Z",
+    MODE,"Alp Umi","Alp Tau","Bet Ori","Alp AUR",
+    STAR1,"Alp Ori","Alp Cmi","Alp Gem","Alp CMI",
+    STAR2,"Bet Gem","Alp Leo","Alp Vir","Alp BOO",
+    NORMAL_SYNC,"Alp Sco","Alp Lyr","Alp Aql","Alp Cyg",
+    RESET,"Alp Psa"," "," "," ",
+    SYNC,GOTO,ALINGC," "," ",
 
-     "Mode","Polaris","Aldebaran","Rigel","Capella",
-    "Star1","Betelgeuse","Procion","Castor","Procyon",
-    "Star2","Pollux","Regulus","Spica","Arcturus",
-    "Sync","Antares","Vega","Altair","Deneb",
-    "Reset","FomalHaut","AChenar","T","W",
-    "U","V","X","Y","Z",
+    MODE,"Polaris","Aldebara","Rigel","Capella",
+    STAR1,"Betelg","Procion","Castor","Procyon",
+    STAR2,"Pollux","Regulus","Spica","Arcturus",
+    SYNC,"Antares","Vega","Altair","Deneb",
+    RESET,"FomalH","Achenar","Mizar","Alnilam",
+    NORMAL_SYNC,GOTO,ALING," "," "
+};
 
-    };
-
- /*   "Mode","A","B","C","D",
-    "SearCh","E","F","G","h",
-    "Keyb","I","J","K","L",
-    "Clr","M","N","0","P",
-    "Q","R","S","T","W",
-    "U","V","X","Y","Z",
+/*   "Mode","A","B","C","D",
+   "SearCh","E","F","G","h",
+   "Keyb","I","J","K","L",
+   "Clr","M","N","0","P",
+   "Q","R","S","T","W",
+   "U","V","X","Y","Z",
 
 "A UMI","A TAU","B ORI","A AUR",
 "A ORI","A CMA","A GEM","A CMI",
@@ -75,20 +74,7 @@ void init_mat(MenuItem *items)
         }
     }
 }
-/*
-void changemat(int a)
-{
-    int idx = 0+a*25;
-    for (int r = 0; r < ROWS; r++)
-    {
-        for (int c = 0; c < COLS; c++)
-        {
-            items[r][c].label = labels[idx++];
 
-        }
-    }
-}
-*/
 void changemat(int a,MenuItem *items)
 {
     int idx = 0+a*ROWS*COLS;

@@ -4,7 +4,7 @@
 #include <SDL2/SDL_ttf.h>
 //#include "kpad.h"
 #define  RED (SDL_Color) {0xFF,0, 0, 255}
-#define  REDW (SDL_Color) {0x00,100, 100, 255}
+#define  REDW (SDL_Color) {0xd0,50, 0, 255}
 #define  ORANGE (SDL_Color) {0xFF,0x60, 0, 255}
 #define  D_AMBER (SDL_Color) {0xFF,0xBF, 0, 255}
 #define  WHITEL (SDL_Color) {0x60,0x60, 0x60, 0}

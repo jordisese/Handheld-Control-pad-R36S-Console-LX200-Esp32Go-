@@ -44,6 +44,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="kpad.h" />
+		<Unit filename="labels.h" />
 		<Unit filename="net.c">
 			<Option compilerVar="CC" />
 		</Unit>

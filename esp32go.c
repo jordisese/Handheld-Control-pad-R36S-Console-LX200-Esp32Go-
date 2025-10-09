@@ -8,11 +8,12 @@
 #include "sdl2utils.h"
 #include "net.h"
 #include <math.h>
+#include "labels.h"
 
 TTF_Font* font1;
 TTF_Font* font2;
 TTF_Font* font;
-char spd[20]="Slew";
+char spd[20]="?";
 char buffp[200] =" ";
 char strlxcoord[256]=" ";
 char buff_alt[200] =" ";
@@ -21,6 +22,7 @@ char str_ra[40];
 char str_dec[40];
 char str_az[40];
 char str_alt[40];
+int  pad_page=0;
 
 extern MenuItem items[ROWS*COLS];
 uintptr_t sockfd;
@@ -44,25 +46,25 @@ void calcular_posicion(const char *nombre)
     struct ln_hrz_posn hrz;
     char temp[100]="   ";
     double JD = ln_get_julian_from_sys();
-    if (strcmp(nombre, "Sol") == 0)
+    if (strcmp(nombre, SUN) == 0)
         ln_get_solar_equ_coords(JD, &pos);
-    else if (strcmp(nombre, "Mercurio") == 0)
+    else if (strcmp(nombre, MERCURY) == 0)
         ln_get_mercury_equ_coords(JD, &pos);
-    else if (strcmp(nombre, "Venus") == 0)
+    else if (strcmp(nombre,VENUS) == 0)
         ln_get_venus_equ_coords(JD, &pos);
-    else if (strcmp(nombre, "Luna") == 0)
+    else if (strcmp(nombre,MOON) == 0)
         ln_get_lunar_equ_coords(JD, &pos);
-    else if (strcmp(nombre, "Marte") == 0)
+    else if (strcmp(nombre, MARS) == 0)
         ln_get_mars_equ_coords(JD, &pos);
-    else if (strcmp(nombre, "Jupiter") == 0)
+    else if (strcmp(nombre,JUPITER) == 0)
         ln_get_jupiter_equ_coords(JD, &pos);
-    else if (strcmp(nombre, "Saturno") == 0)
+    else if (strcmp(nombre,SATURN) == 0)
         ln_get_saturn_equ_coords(JD, &pos);
-    else if (strcmp(nombre, "Urano") == 0)
+    else if (strcmp(nombre,URANUS) == 0)
         ln_get_uranus_equ_coords(JD, &pos);
-    else if (strcmp(nombre, "Neptuno") == 0)
+    else if (strcmp(nombre, NEPTUNE) == 0)
         ln_get_neptune_equ_coords(JD, &pos);
-    else if (strcmp(nombre, "Pluton") == 0)
+    else if (strcmp(nombre,PLUTO) == 0)
         ln_get_pluto_equ_coords(JD, &pos);
     else if (strcmp(nombre, "<-") == 0)
     {
@@ -70,12 +72,12 @@ void calcular_posicion(const char *nombre)
             inputbuffer[strlen(inputbuffer)-1]=0;
         return;
     }
-    else if (strcmp(nombre, "Clr") == 0)
+    else if (strcmp(nombre, CLEAR) == 0)
     {
         inputbuffer[0]=0;
         return;
     }
-    else if (strcmp(nombre, "Search") == 0)
+    else if (strcmp(nombre, SEARCH) == 0)
     {
         if (squery(inputbuffer,buffp,&pos,inputbuffer[0])) printf("Found!\n");
         else
@@ -85,7 +87,7 @@ void calcular_posicion(const char *nombre)
         }
         // return;
     }
-    else if (strcmp(nombre, "SearCh") == 0)
+    else if (strcmp(nombre, SEARCHST) == 0)
     {
         printf("Search\n");
         char * ptr;
@@ -102,7 +104,7 @@ void calcular_posicion(const char *nombre)
 
 
     }
-    else if (strcmp(nombre, "GoTo") == 0)
+    else if (strcmp(nombre, GOTO) == 0)
     {
         if (altitude>=0.0)
         {
@@ -113,7 +115,7 @@ void calcular_posicion(const char *nombre)
         else printf("Bajo el horizonte\n");
         return;
     }
-    else if (strcmp(nombre, "Sync") == 0)
+    else if (strcmp(nombre, SYNC) == 0)
     {
 
         sendCmd(sockfd,strlxcoord);
@@ -121,7 +123,7 @@ void calcular_posicion(const char *nombre)
         read(sockfd,temp,4);
         return;
     }
-    else if (strcmp(nombre, "Connect") == 0)
+    else if (strcmp(nombre,CONNECT) == 0)
     {
         close(sockfd);
         sockfd=initsock();
@@ -141,7 +143,7 @@ void calcular_posicion(const char *nombre)
         return;
 
     }
-    else if (strcmp(nombre, "Close") == 0)
+    else if (strcmp(nombre, CLOSE_CONN) == 0)
     {
         close(sockfd);
 
@@ -167,82 +169,106 @@ void calcular_posicion(const char *nombre)
         strcat(inputbuffer,nombre);
         return;
     }
-    else if (strcmp(nombre, "Home") == 0)
+    else if (strcmp(nombre, HOME) == 0)
     {
         sendCmd(sockfd, ":pH#");
         return;
 
     }
-      else if (strcmp(nombre, "West") == 0)
+      else if (strcmp(nombre,WEST) == 0)
     {
         sendCmd(sockfd, ":hH3#");
         return;
 
     }
-          else if (strcmp(nombre, "East") == 0)
+          else if (strcmp(nombre, EAST) == 0)
     {
         sendCmd(sockfd, ":hH2#");
         return;
 
     }
-             else if (strcmp(nombre, "SetHome") == 0)
+             else if (strcmp(nombre, SETHOME) == 0)
     {
         sendCmd(sockfd, ":hH2#");
         return;
 
     }
-           else if (strcmp(nombre, "Zenith") == 0)
+           else if (strcmp(nombre, ZENITH) == 0)
     {
         sendCmd(sockfd, ":hH1#");
         return;
 
     }
 
-      else if (strcmp(nombre, "NCP") == 0)
+      else if (strcmp(nombre, N_POLE) == 0)
     {
         sendCmd(sockfd, ":hH0#");
         return;
 
     }
-    else if (strcmp(nombre, "Park") == 0)
+    else if (strcmp(nombre, PARK) == 0)
     {
         sendCmd(sockfd,":hP#");
         return;
     }
-    else if (strcmp(nombre, "Track") == 0)
+    else if (strcmp(nombre, TRACK) == 0)
     {
         sendCmd(sockfd, ":Qw#:Mt#");
         return;
     }
-    else if (strcmp(nombre, "Untrack") == 0)
+    else if (strcmp(nombre, UNTRACK) == 0)
     {
         sendCmd(sockfd, ":Mh#");
         return;
     }
-    else if (strcmp(nombre, "Mode") == 0)
+     else if (strcmp(nombre, STAR1) == 0)
     {
-        changemat(0,items);
+        sendCmd(sockfd, ":a1#");
         return;
     }
-    else if (strcmp(nombre, "Planets") == 0)
+        else if (strcmp(nombre, STAR2) == 0)
     {
-        changemat(1,items);
+        sendCmd(sockfd, ":a2#");
         return;
     }
-    else if (strcmp(nombre, "Stars") == 0)
+            else if (strcmp(nombre, "Reset") == 0)
     {
-        changemat(2,items);
+        sendCmd(sockfd, ":a3#");
         return;
     }
-    else if (strcmp(nombre, "Align") == 0)
+    else if (strcmp(nombre, NORMAL_SYNC) == 0)
     {
-        changemat(3,items);
+        sendCmd(sockfd, ":a0#");
         return;
     }
-       else if (strcmp(nombre, "AlignC") == 0)
-    {
-        changemat(4,items);
+    else if (strcmp(nombre, MODE) == 0)
+    {   pad_page=0;
+        changemat( pad_page,items);
         return;
+    }
+    else if (strcmp(nombre, PLANETS) == 0)
+    {
+        pad_page=1;
+        changemat( pad_page,items);
+        return;
+
+    }
+    else if (strcmp(nombre, STARS) == 0)
+    {
+        pad_page=2;
+        changemat( pad_page,items);
+        return;
+    }
+    else if (strcmp(nombre, ALING) == 0)
+    {
+        pad_page=3;
+        changemat( pad_page,items);
+        return;
+    }
+       else if (strcmp(nombre, ALINGC) == 0)
+    {
+        pad_page=4;
+        changemat( pad_page,items);
     }
 
     else
@@ -269,7 +295,7 @@ void calcular_posicion(const char *nombre)
 
     printf("%s - RA: %.4f h, DEC: %.4f°\n", nombre, pos.ra, pos.dec);
 
-    ln_get_equ_prec(&pos,JD,&pos);
+   ln_get_equ_prec(&pos,JD,&pos);
 
     ln_equ_to_hequ (&pos, &hequ);
     int sig=(hequ.dec.neg==1)? -1:1;
@@ -357,9 +383,9 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
     //SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     // sprintf(state,"%s %s %s" ,(status&1)?"Tracking":"Stop",(status&2)?"Parked":" ",(status&8)?"Slewing":" ");
-    if (status&8) strcpy(state,"Slewing") ;
-    else if (status&2) strcpy(state,"Parked");
-    else  strcpy(state,(status&1)? "Tracking":"Stop") ;
+    if (status&8) strcpy(state,SLEWING) ;
+    else if (status&2) strcpy(state,PARKED);
+    else  strcpy(state,(status&1)? TRACKING:STOPPED) ;
     // sprintf(state,"%s " ,(status&1)?"Tracking":"Stop",(status&2)?"Parked":" ",(status&8)?"Slewing":" ");
     SDL_RenderClear(renderer);
     draw_pad(renderer,sel_row,sel_col,font,items);
@@ -393,10 +419,10 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
 
     SDL_Rect rect= {5,5,630,140};
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    render_text( renderer, 15,7,(char*) "Right ascension ",font2,WHITEL);
-    render_text( renderer, 340,7,(char*) "Azimuth ",font2,WHITEL);
-    render_text( renderer, 15,75,(char*) "Declination",font2,WHITEL);
-    render_text( renderer, 340,75,(char*) "Altitude ",font2,WHITEL);
+    render_text( renderer, 15,7,(char*) RA,font2,WHITEL);
+    render_text( renderer, 340,7,(char*) AZ,font2,WHITEL);
+    render_text( renderer, 15,75,(char*) DEC,font2,WHITEL);
+    render_text( renderer, 340,75,(char*) ALT,font2,WHITEL);
     render_text( renderer, 10,140,"                 ",font1,RED);
     render_text( renderer, 10,140,inputbuffer,font1,ORANGE);
 
@@ -468,7 +494,7 @@ int main(int argc, char *argv[])
     }
 
 
-    calcular_posicion("Search");
+    calcular_posicion(SEARCH);
 
     //unsigned int cn=0;
 
@@ -540,26 +566,30 @@ int main(int argc, char *argv[])
                     break;
                 case GUIDE_BTN: // Start
                     sendCmd(sockfd, ":RG#");
-                    strcpy(spd,"GUIDE    ");
+                    strcpy(spd,GUIDE);
                     break;
                 case SLEW_BTN: // Start
                     sendCmd(sockfd, ":RS#");
-                    strcpy(spd,"SLEW     ");
+                    strcpy(spd,SLEW);
 
                     break;
                 case CENTER_BTN: // Start
                     sendCmd(sockfd, ":RC#");
-                    strcpy(spd,"CENTER    ");
+                    strcpy(spd,CENTER);
 
                     break;
                 case FIND_BTN: // Start
                     sendCmd(sockfd, ":RM#");
-                    strcpy(spd,"FIND    ");
+                    strcpy(spd,FIND);
 
                     break;
                 case X_BTN: // Start
                     inputbuffer[strlen(inputbuffer)-1]=0;
 
+                    break;
+                 case Y_BTN: // Start
+                     pad_page=(pad_page+1) %5;
+        changemat( pad_page,items);
                     break;
                 case FN_BTN:
                     close(sockfd);

@@ -76,6 +76,8 @@ void draw_pad(SDL_Renderer *renderer,int sel_row,int sel_col,TTF_Font *font,Menu
     }
 }
 
+
+
 void init_fonts(void)
 {
 

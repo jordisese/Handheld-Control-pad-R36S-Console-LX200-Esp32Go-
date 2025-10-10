@@ -110,7 +110,7 @@
 	"sdl2utils.h"
 	"kpad.h"
 
-1760008546 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/esp32go.c
+1760024720 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/esp32go.c
 	<stdio.h>
 	<stdbool.h>
 	<string.h>
@@ -123,7 +123,7 @@
 	<math.h>
 	"labels.h"
 
-1759075241 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/kpad.h
+1760083818 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/kpad.h
 	<SDL2/SDL.h>
 
 1759677652 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/conf.h
@@ -181,7 +181,7 @@
 1759765226 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/query.c
 	"query.h"
 
-1759766673 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/sdl2utils.c
+1760083818 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/sdl2utils.c
 	"sdl2utils.h"
 	"kpad.h"
 	"conf.h"

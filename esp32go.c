@@ -91,10 +91,10 @@ void calcular_posicion(const char *nombre)
     {
         printf("Search\n");
         char * ptr;
-       int    ch = ' ';
+        int    ch = ' ';
 
-    ptr = strchr(inputbuffer, ch );
-    ch=(ptr==NULL)? 's':'f';
+        ptr = strchr(inputbuffer, ch );
+        ch=(ptr==NULL)? 's':'f';
         if (squery(inputbuffer,buffp,&pos,ch)) printf("Found!\n");
         else
         {
@@ -175,32 +175,32 @@ void calcular_posicion(const char *nombre)
         return;
 
     }
-      else if (strcmp(nombre,WEST) == 0)
+    else if (strcmp(nombre,WEST) == 0)
     {
         sendCmd(sockfd, ":hH3#");
         return;
 
     }
-          else if (strcmp(nombre, EAST) == 0)
+    else if (strcmp(nombre, EAST) == 0)
     {
         sendCmd(sockfd, ":hH2#");
         return;
 
     }
-             else if (strcmp(nombre, SETHOME) == 0)
+    else if (strcmp(nombre, SETHOME) == 0)
     {
         sendCmd(sockfd, ":hH2#");
         return;
 
     }
-           else if (strcmp(nombre, ZENITH) == 0)
+    else if (strcmp(nombre, ZENITH) == 0)
     {
         sendCmd(sockfd, ":hH1#");
         return;
 
     }
 
-      else if (strcmp(nombre, N_POLE) == 0)
+    else if (strcmp(nombre, N_POLE) == 0)
     {
         sendCmd(sockfd, ":hH0#");
         return;
@@ -221,17 +221,17 @@ void calcular_posicion(const char *nombre)
         sendCmd(sockfd, ":Mh#");
         return;
     }
-     else if (strcmp(nombre, STAR1) == 0)
+    else if (strcmp(nombre, STAR1) == 0)
     {
         sendCmd(sockfd, ":a1#");
         return;
     }
-        else if (strcmp(nombre, STAR2) == 0)
+    else if (strcmp(nombre, STAR2) == 0)
     {
         sendCmd(sockfd, ":a2#");
         return;
     }
-            else if (strcmp(nombre, "Reset") == 0)
+    else if (strcmp(nombre, "Reset") == 0)
     {
         sendCmd(sockfd, ":a3#");
         return;
@@ -242,7 +242,8 @@ void calcular_posicion(const char *nombre)
         return;
     }
     else if (strcmp(nombre, MODE) == 0)
-    {   pad_page=0;
+    {
+        pad_page=0;
         changemat( pad_page,items);
         return;
     }
@@ -265,21 +266,22 @@ void calcular_posicion(const char *nombre)
         changemat( pad_page,items);
         return;
     }
-       else if (strcmp(nombre, ALINGC) == 0)
+    else if (strcmp(nombre, ALINGC) == 0)
     {
         pad_page=4;
         changemat( pad_page,items);
     }
 
     else
-    {  char * ptr;
-       int    ch = ' ';
+    {
+        char * ptr;
+        int    ch = ' ';
 
-    ptr = strchr(nombre, ch );
-    ch=(ptr==NULL)? 's':'f';
+        ptr = strchr(nombre, ch );
+        ch=(ptr==NULL)? 's':'f';
 
         printf("No calculable: %s\n", nombre);
-       // return;
+        // return;
         printf("Search %c \n",ch);
         strcpy(inputbuffer,nombre);
         if (squery(inputbuffer,buffp,&pos,ch)) printf("Found!\n");
@@ -295,7 +297,7 @@ void calcular_posicion(const char *nombre)
 
     printf("%s - RA: %.4f h, DEC: %.4f°\n", nombre, pos.ra, pos.dec);
 
-   ln_get_equ_prec(&pos,JD,&pos);
+    ln_get_equ_prec(&pos,JD,&pos);
 
     ln_equ_to_hequ (&pos, &hequ);
     int sig=(hequ.dec.neg==1)? -1:1;
@@ -587,9 +589,9 @@ int main(int argc, char *argv[])
                     inputbuffer[strlen(inputbuffer)-1]=0;
 
                     break;
-                 case Y_BTN: // Start
-                     pad_page=(pad_page+1) %5;
-        changemat( pad_page,items);
+                case Y_BTN: // Start
+                    pad_page=(pad_page+1) %5;
+                    changemat( pad_page,items);
                     break;
                 case FN_BTN:
                     close(sockfd);

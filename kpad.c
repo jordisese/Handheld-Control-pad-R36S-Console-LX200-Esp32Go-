@@ -75,6 +75,8 @@ void init_mat(MenuItem *items)
     }
 }
 
+
+
 void changemat(int a,MenuItem *items)
 {
     int idx = 0+a*ROWS*COLS;

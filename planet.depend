@@ -170,7 +170,7 @@
 	<libnova/ln_types.h>
 	"conf.h"
 
-1760009424 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/kpad.c
+1760084611 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/kpad.c
 	"kpad.h"
 	"labels.h"
 

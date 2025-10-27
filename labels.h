@@ -1,5 +1,5 @@
-#define LANG
-#ifdef  LANG
+//#define LANG
+#ifndef  LANG
 #define RA "Rigth Ascension"
 #define DEC "Declination"
 #define ALT "Altitude"
@@ -48,9 +48,9 @@
 #define STOPPED "Stop"
 #define TRACKING "Tracking"
 #define NORMAL_SYNC "NSync"
-#define ALING "Aling"
+#define ALING "Align"
 #define ALINGC "AlingC"
-
+#define COMET "Comet"
 
 #else
 #define RA "Ascensión Recta"
@@ -103,5 +103,6 @@
 #define NORMAL_SYNC "NSinc."
 #define ALING "Alinear"
 #define ALINGC "AlinearC"
+#define COMET "Cometa"
 #endif
 #define B_DEL "<-"

@@ -106,4 +106,9 @@ void init_fonts(void)
     }
 }
 
-
+int read_battery(void)
+{
+    int percent=100;
+    SDL_GetPowerInfo(NULL, &percent);
+    return percent;
+}

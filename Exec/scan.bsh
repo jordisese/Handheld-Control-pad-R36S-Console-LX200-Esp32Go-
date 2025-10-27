@@ -1,0 +1,44 @@
+#!/bin/bash
+
+max_timeout=0.05 #
+ESP32_P="esp32go#"
+function do_sread_port {
+exec 3<>/dev/tcp/$1/10001
+
+# >& redirects stdout to /dev/fd/3
+timeout 0.1   echo -e ":GVP#" >&3
+# Read and print the server's response
+# <& redirects the output of /dev/fd/3 to cat
+
+IP_RESPONSE=$(timeout 0.1 cat <&3 | tr -d '\000' 2>/dev/null)
+if [[ "$IP_RESPONSE" == "$ESP32_P" ]]; then
+echo  $1 $IP_RESPONSE >>/dev/tty1
+echo $1 > /roms/esp32go/conf.cfg
+fi
+
+# Close the file descriptor, terminating the TCP connection
+exec 3>&-
+}
+
+function do_scan_port {
+
+echo ${1}>>/dev/tty1
+   { timeout $max_timeout bash -c "echo \"\" >/dev/tcp/$1/10001 && echo ${1}>>tempfile && echo ${1} Found!! >> /dev/tty1  " ;} 2>/dev/null
+ }
+echo -e "\033c">>/dev/tty1
+#clean file
+echo -n > tempfile
+subred=$(hostname -I | awk '{print $1}' | cut -d'.' -f1-3)
+echo  Buscando en $subred >> /dev/tty1
+for ip in {1..254}; do
+  do_scan_port $subred.$ip
+done
+echo -e "\033c">>/dev/tty1
+#cat tempfile >>/dev/tty1
+while IFS= read -r line; do
+    do_sread_port $line
+done < tempfile
+rm tempfile
+sleep 5
+
+

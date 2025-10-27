@@ -19,6 +19,7 @@
 #include <libnova/transform.h>
 #include <libnova/utility.h>
 #include <libnova/precession.h>
+#include <libnova/elliptic_motion.h>
 #include "conf.h"
 //void squery(char* param,char* out, struct ln_equ_posn *pos);
 int squery(char* param,char* out,struct ln_equ_posn *pos,char table);

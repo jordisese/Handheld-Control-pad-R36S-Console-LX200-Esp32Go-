@@ -1,5 +1,5 @@
 # Makefile for R36S stuff
-CFLAGS=-c -Wall -O2 
+CFLAGS=-c -Wall -O2
 LIBS = -lm
 PROG = planets
 INCLUDES = -I. -I/usr/include

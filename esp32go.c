@@ -28,7 +28,7 @@ extern MenuItem items[ROWS*COLS];
 uintptr_t sockfd;
 char buf[1024]=" ";
 char buf3[1024]=" ";
-char inputbuffer[200]="M1";
+char inputbuffer[200]="M42";
 //double lat =36.72 ;
 //double lng= -4.12;
 double ra,dec;
@@ -80,6 +80,16 @@ void calcular_posicion(const char *nombre)
     else if (strcmp(nombre, SEARCH) == 0)
     {
         if (squery(inputbuffer,buffp,&pos,inputbuffer[0])) printf("Found!\n");
+        else
+        {
+            printf("%s not found!\n",buffp);
+            return;
+        }
+        // return;
+    }
+     else if (strcmp(nombre, COMET) == 0)
+    {
+        if (squery(inputbuffer,buffp,&pos,'c') ) printf("Found!\n");
         else
         {
             printf("%s not found!\n",buffp);
@@ -382,12 +392,13 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
 {
     int status =buf3[47]-48+buf3[48]-48;
     const char state[50];
+    const char batt[15]="100%";
     //SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     // sprintf(state,"%s %s %s" ,(status&1)?"Tracking":"Stop",(status&2)?"Parked":" ",(status&8)?"Slewing":" ");
-    if (status&8) strcpy(state,SLEWING) ;
-    else if (status&2) strcpy(state,PARKED);
-    else  strcpy(state,(status&1)? TRACKING:STOPPED) ;
+    if (status&8) strcpy(( char * restrict) state,SLEWING) ;
+    else if (status&2) strcpy(( char * restrict) state,PARKED);
+    else  strcpy(( char * restrict) state,(status&1)? TRACKING:STOPPED) ;
     // sprintf(state,"%s " ,(status&1)?"Tracking":"Stop",(status&2)?"Parked":" ",(status&8)?"Slewing":" ");
     SDL_RenderClear(renderer);
     draw_pad(renderer,sel_row,sel_col,font,items);
@@ -417,8 +428,8 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
 
     // render_text(renderer,340,20,(char*) (buf3+23),font1,REDW);//az
     // render_text(renderer,325,90,(char*) (buf3+35),font1,REDW);//alt
-    // render_text(renderer,325,150,(char*) buff_alt,font2,REDW);//alt
-
+    // render_text(renderer,325,150,(char*) buff_alt,font2,REDW);//alt;
+    sprintf((char * restrict) batt,"%d%c",read_battery(),'%');
     SDL_Rect rect= {5,5,630,140};
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     render_text( renderer, 15,7,(char*) RA,font2,WHITEL);
@@ -427,7 +438,7 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
     render_text( renderer, 340,75,(char*) ALT,font2,WHITEL);
     render_text( renderer, 10,140,"                 ",font1,RED);
     render_text( renderer, 10,140,inputbuffer,font1,ORANGE);
-
+     render_text( renderer, 600,7,(char*) batt ,font2,ORANGE);
     // Draw the rectangle (filled)
     SDL_RenderDrawRect(renderer, &rect);
     rect.w = 640/2;

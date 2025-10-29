@@ -47,7 +47,6 @@
 #define GX_SIZE 49
 #else
 #define DVSANSBOLD "DejaVuSans-Bold.ttf"
-#define GX_SIZE 50
 #endif
 
 

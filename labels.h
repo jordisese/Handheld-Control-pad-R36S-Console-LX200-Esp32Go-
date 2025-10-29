@@ -51,7 +51,6 @@
 #define ALING "Align"
 #define ALINGC "AlingC"
 #define COMET "Comet"
-
 #else
 #define RA "Ascensión Recta"
 #define DEC "Declinación"
@@ -104,5 +103,9 @@
 #define ALING "Alinear"
 #define ALINGC "AlinearC"
 #define COMET "Cometa"
+
 #endif
 #define B_DEL "<-"
+#define MESSIER "Messier"
+#define NGC "NGC"
+#define IC "IC"

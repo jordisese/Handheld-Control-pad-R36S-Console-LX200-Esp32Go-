@@ -1,0 +1,21 @@
+#!/bin/bash
+URL="https://astro.vanbuitenen.nl/"
+CMD="cometelements?format=kstars&mag=obs"
+ESPDIR="/roms/esp32go/"
+CFILE="cometsk.txt"
+DB="deep.db3"
+TABLE="comet"
+echo -e "\033c">>/dev/tty1
+echo Conectando a $URL >>/dev/tty1
+
+ if  wget -O "$ESPDIR$CFILE"  "$URL$CMD" ; then
+  echo $URL  OK >>/dev/tty1
+  echo Procesando fichero cometas  >>/dev/tty1
+ /roms/esp32go/importcometDB.sh   "$ESPDIR$CFILE"   "$ESPDIR$DB"   "$TABLE" >>/dev/tty1
+ rm "$ESPDIR$CFILE"
+ else
+ echo No hay conexion con  $URL >>/dev/tty1
+ fi
+echo "Saliendo.." >>/dev/tty1
+sleep 3
+echo -e "\033c">>/dev/tty1

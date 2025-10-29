@@ -1,8 +1,8 @@
 #include "kpad.h"
 #include "labels.h"
-const  char *labels[ROWS * COLS*5] =
+const  char *labels[ROWS * COLS*6] =
 {
-    PLANETS,"Messier", "NGC","IC",STARS,
+    PLANETS,MESSIER, NGC,IC,STARS,
     GOTO,"1","2","3",B_DEL,
     SEARCH, "4", "5","6",CLEAR,
     SYNC, "7", "8","9","+",
@@ -16,12 +16,6 @@ const  char *labels[ROWS * COLS*5] =
     TRACK, EAST,WEST,N_POLE,SOUTH,
     UNTRACK,ZENITH,HOME,SETHOME,ALING,
 
-    MODE,"a","b","c","d",
-    SEARCHST,"e","f","g","h",
-    CLEAR,"i","j","k","l",
-    " ","m","n","o","p",
-    "q","r","s","t","u",
-    "w","v","x","y","z",
 
     MODE,"Alp Umi","Alp Tau","Bet Ori","Alp AUR",
     STAR1,"Alp Ori","Alp Cmi","Alp Gem","Alp CMI",
@@ -35,7 +29,24 @@ const  char *labels[ROWS * COLS*5] =
     STAR2,"Pollux","Regulus","Spica","Arcturus",
     SYNC,"Antares","Vega","Altair","Deneb",
     RESET,"FomalH","Achenar","Mizar","Alnilam",
-    NORMAL_SYNC,GOTO,ALING," "," "
+    NORMAL_SYNC,GOTO,ALING," "," ",
+
+     MODE,"a","b","c","d",
+    SEARCHST,"e","f","g","h",
+    CLEAR,"i","j","k","l",
+    " ","m","n","o","p",
+    "q","r","s","t","u",
+    "w","v","x","y","z",
+
+    MODE,MESSIER,NGC,IC,COMET,
+    GOTO,"1","2","3","/",
+    SYNC,"4","5","6","+",
+    CLEAR,"7","8","9","-",
+    COMET," ","0",".","*",
+    SEARCH,"r","s","t","u",
+
+
+
 };
 
 /*   "Mode","A","B","C","D",

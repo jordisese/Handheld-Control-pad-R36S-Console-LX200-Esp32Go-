@@ -84,7 +84,7 @@ int read_esp(int sockfd,char* buffer)
 
     write(sockfd, buffx, sizeof(buffx));
     int len = read(sockfd,buffx,99);
-    if (len==GX_SIZE)
+    if ((len==GX_SIZE)||(len==GX_SIZE+1))
 
     {
         //printf("%s\n",buffx);

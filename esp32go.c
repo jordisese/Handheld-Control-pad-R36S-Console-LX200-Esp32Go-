@@ -601,7 +601,7 @@ int main(int argc, char *argv[])
 
                     break;
                 case Y_BTN: // Start
-                    pad_page=(pad_page+1) %5;
+                    pad_page=(pad_page+1) %6;
                     changemat( pad_page,items);
                     break;
                 case FN_BTN:

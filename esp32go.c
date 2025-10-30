@@ -350,7 +350,7 @@ int readsock(void *point)
         read(sockfd,buf,count);
         // read(sockfd,buf,100);
         len = read_esp(sockfd,buf3);
-        if (len==GX_SIZE)
+        if (len==GX_SIZE || len==GX_SIZE+1)
         {
             hequ.ra.hours= (buf3[0]-48)*10+(buf3[1]-48);
             hequ.ra.minutes=(buf3[3]-48)*10+(buf3[4]-48);

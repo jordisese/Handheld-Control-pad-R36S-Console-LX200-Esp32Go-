@@ -42,11 +42,11 @@
 
 #endif // K36S
 #define ESP_ADDRESS "192.168.1.17"
+#define GX_SIZE 49
 #ifndef CUSTOMTTF
 #define DVSANSBOLD "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-#define GX_SIZE 49
 #else
-#define DVSANSBOLD "DejaVuSans-Bold.ttf"
+#define DVSANSBOLD "/Library/Fonts/DejaVuSans-Bold.ttf"
 #endif
 
 

@@ -13,6 +13,7 @@
 TTF_Font* font1;
 TTF_Font* font2;
 TTF_Font* font;
+TTF_Font* font3;
 char spd[20]="?";
 char buffp[200] =" ";
 char strlxcoord[256]=" ";
@@ -24,7 +25,7 @@ char str_az[40];
 char str_alt[40];
 int  pad_page=0;
 
-extern MenuItem items[ROWS*COLS];
+extern MenuItem items[ROWS*COLS],alp_items[ROWS*ALP_COLS];
 uintptr_t sockfd;
 char buf[1024]=" ";
 char buf3[1024]=" ";
@@ -36,7 +37,7 @@ struct ln_lnlat_posn observer= {-4.12,36.72};
 char eqmode='P';
 //Prototypes not declared on Headers
 void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col) ;
-void draw_pad(SDL_Renderer *renderer,int sel_row,int sel_col,TTF_Font *font,MenuItem *items);
+void draw_pad(SDL_Renderer *renderer,int sel_row,int sel_col,TTF_Font *font,MenuItem *items,int rows,int cols);
 //--------------------------------------------
 void calcular_posicion(const char *nombre)
 {
@@ -47,25 +48,65 @@ void calcular_posicion(const char *nombre)
     char temp[100]="   ";
     double JD = ln_get_julian_from_sys();
     if (strcmp(nombre, SUN) == 0)
+    {
         ln_get_solar_equ_coords(JD, &pos);
+        strcpy(inputbuffer,nombre);
+        buffp[0]=0;
+    }
     else if (strcmp(nombre, MERCURY) == 0)
+    {
         ln_get_mercury_equ_coords(JD, &pos);
+        strcpy(inputbuffer,nombre);
+        buffp[0]=0;
+    }
     else if (strcmp(nombre,VENUS) == 0)
+    {
         ln_get_venus_equ_coords(JD, &pos);
+        strcpy(inputbuffer,nombre);
+        buffp[0]=0;
+    }
     else if (strcmp(nombre,MOON) == 0)
+    {
         ln_get_lunar_equ_coords(JD, &pos);
+        strcpy(inputbuffer,nombre);
+        buffp[0]=0;
+    }
     else if (strcmp(nombre, MARS) == 0)
+    {
         ln_get_mars_equ_coords(JD, &pos);
+        strcpy(inputbuffer,nombre);
+        buffp[0]=0;
+    }
     else if (strcmp(nombre,JUPITER) == 0)
+    {
         ln_get_jupiter_equ_coords(JD, &pos);
+        strcpy(inputbuffer,nombre);
+        buffp[0]=0;
+    }
     else if (strcmp(nombre,SATURN) == 0)
+    {
         ln_get_saturn_equ_coords(JD, &pos);
+        strcpy(inputbuffer,nombre);
+        buffp[0]=0;
+    }
     else if (strcmp(nombre,URANUS) == 0)
+    {
         ln_get_uranus_equ_coords(JD, &pos);
+        strcpy(inputbuffer,nombre);
+        buffp[0]=0;
+    }
     else if (strcmp(nombre, NEPTUNE) == 0)
+    {
         ln_get_neptune_equ_coords(JD, &pos);
+        strcpy(inputbuffer,nombre);
+        buffp[0]=0;
+    }
     else if (strcmp(nombre,PLUTO) == 0)
+    {
         ln_get_pluto_equ_coords(JD, &pos);
+        strcpy(inputbuffer,nombre);
+        buffp[0]=0;
+    }
     else if (strcmp(nombre, "<-") == 0)
     {
         if (strlen(inputbuffer)<0)
@@ -82,12 +123,26 @@ void calcular_posicion(const char *nombre)
         if (squery(inputbuffer,buffp,&pos,inputbuffer[0])) printf("Found!\n");
         else
         {
-            printf("%s not found!\n",buffp);
-            return;
+            printf("Search\n");
+            char * ptr;
+            int    ch = ' ';
+
+            ptr = strchr(inputbuffer, ch );
+            ch=(ptr==NULL)? 's':'f';
+            if (squery(inputbuffer,buffp,&pos,ch)) printf("Found!\n");
+            else
+            {
+                if (squery(inputbuffer,buffp,&pos,'c') ) printf("Found!\n");
+                else
+                {
+                    printf("%s not found!\n",buffp);
+                    return;
+                }
+            }
         }
         // return;
     }
-     else if (strcmp(nombre, COMET) == 0)
+    else if (strcmp(nombre, COMET) == 0)
     {
         if (squery(inputbuffer,buffp,&pos,'c') ) printf("Found!\n");
         else
@@ -162,12 +217,12 @@ void calcular_posicion(const char *nombre)
         return;
 
     }
-    else if (strcmp(nombre, "NGC") == 0)
+    else if (strcmp(nombre, NGC) == 0)
     {
         strcpy(inputbuffer,nombre);
         return;
     }
-    else if (strcmp(nombre, "Messier") == 0)
+    else if (strcmp(nombre, MESSIER) == 0)
     {
         strcpy(inputbuffer,"M");
         return;
@@ -312,8 +367,9 @@ void calcular_posicion(const char *nombre)
     ln_equ_to_hequ (&pos, &hequ);
     int sig=(hequ.dec.neg==1)? -1:1;
     ln_get_hrz_from_equ (&pos, &observer, JD, &hrz);
-    sprintf(buftarget,"%s RA %02d:%02d:%02.0f Dec %+03d°%02d\'%02.0f  Az  %.4f  Alt %.4f    ",inputbuffer,
-            hequ.ra.hours, hequ.ra.minutes, hequ.ra.seconds, sig * hequ.dec.degrees, hequ.dec.minutes, hequ.dec.seconds,fmod (hrz.az+180.0,360.0),hrz.alt);
+    sprintf(buftarget,"%s  %02d:%02d:%02.0f/%+03d°%02d\'%02.0f Az %.2f Alt %.2f  %s  ",inputbuffer,
+            hequ.ra.hours, hequ.ra.minutes, hequ.ra.seconds, sig * hequ.dec.degrees, hequ.dec.minutes,
+            hequ.dec.seconds,fmod (hrz.az+180.0,360.0),hrz.alt,hrz.alt>0.0? "":"UH");
 
     sprintf(strlxcoord,":Sr%02d:%02d:%02.0f#:Sd%+03d:%02d:%02.0f#",hequ.ra.hours,
             hequ.ra.minutes, hequ.ra.seconds, sig *hequ.dec.degrees, hequ.dec.minutes, hequ.dec.seconds);
@@ -401,9 +457,13 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
     else  strcpy(( char * restrict) state,(status&1)? TRACKING:STOPPED) ;
     // sprintf(state,"%s " ,(status&1)?"Tracking":"Stop",(status&2)?"Parked":" ",(status&8)?"Slewing":" ");
     SDL_RenderClear(renderer);
-    draw_pad(renderer,sel_row,sel_col,font,items);
-    render_text( renderer,10,240,(char* )buftarget, font2,ORANGE);//lx200 target
-    render_text( renderer,10,220,(char* )buffp, font2,ORANGE);//lx200 target
+    if (pad_page==4)
+        draw_pad(renderer,sel_row,sel_col,font,alp_items,ROWS,ALP_COLS);
+    else
+        draw_pad(renderer,sel_row,sel_col,font,items,ROWS,COLS);
+
+    render_text( renderer,10,240,(char* )buftarget, font3,ORANGE);//lx200 target
+    render_text( renderer,10,215,(char* )buffp, font3,ORANGE);//lx200 target
 
     render_text(renderer,20,20,(char*) str_ra,font1,RED); //ra
     render_text(renderer,20,90,(char*) str_dec,font1,RED);//dec
@@ -438,7 +498,7 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
     render_text( renderer, 340,75,(char*) ALT,font2,WHITEL);
     render_text( renderer, 10,140,"                 ",font1,RED);
     render_text( renderer, 10,140,inputbuffer,font1,ORANGE);
-     render_text( renderer, 600,7,(char*) batt ,font2,ORANGE);
+    render_text( renderer, 600,7,(char*) batt,font2,ORANGE);
     // Draw the rectangle (filled)
     SDL_RenderDrawRect(renderer, &rect);
     rect.w = 640/2;
@@ -482,8 +542,8 @@ int main(int argc, char *argv[])
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     init_fonts();
 
-    init_mat(items);
-
+    init_mat_cus(items,ROWS,COLS,0);
+    init_mat_cus(alp_items,ROWS,ALP_COLS,120);
     int sel_row = 0, sel_col = 0;
     int last_haxis = 0, last_vaxis = 0;
     bool running = true;
@@ -551,7 +611,7 @@ int main(int argc, char *argv[])
             {
                 if (e.jaxis.axis == 0)
                 {
-                    readpad( e,&last_haxis,&sel_col,COLS);
+                    readpad( e,&last_haxis,&sel_col,pad_page==4? ALP_COLS:COLS);
                 }
                 else if (e.jaxis.axis == 1)
                 {
@@ -601,8 +661,12 @@ int main(int argc, char *argv[])
 
                     break;
                 case Y_BTN: // Start
-                    pad_page=(pad_page+1) %6;
+                    // if (pad_page==4) pad_page=0;
+                    //else
+                    pad_page=(pad_page+1) %5;
+                    //    pad_page=4;
                     changemat( pad_page,items);
+
                     break;
                 case FN_BTN:
                     close(sockfd);
@@ -618,6 +682,14 @@ int main(int argc, char *argv[])
 
 
                     break;
+
+                case SELECT_BTN:
+                    calcular_posicion(GOTO);
+                    break;
+                case START_BTN:
+                    calcular_posicion(SEARCH);
+                    break;
+
                 default:
 
                     break;
@@ -629,7 +701,16 @@ int main(int argc, char *argv[])
                 if ((e.jbutton.button == JOY1_BTN)  || (e.jbutton.button == A_BTN)) // Botón A
                     //  if (e.jbutton.button == B_BTN)   // Botón A
                 {
-                    const char *seleccion = items[sel_row*COLS+sel_col].label;
+                    const char *seleccion;
+                    if (pad_page==4)
+
+                    {
+                        seleccion = alp_items[sel_row*ALP_COLS+sel_col].label;
+                    }
+                    else
+                    {
+                        seleccion = items[sel_row*COLS+sel_col].label;
+                    }
                     calcular_posicion(seleccion);
 
 
@@ -661,6 +742,11 @@ int main(int argc, char *argv[])
                 case 13: // Start
                     // quit=SDL_TRUE;
                     break;
+                //   case Y_BTN: // Start
+                // pad_page=(pad_page+1) %6;
+                //  pad_page=0;
+                //  changemat( pad_page,items);
+                //  break;
 
                 default:
                     break;

@@ -1,6 +1,8 @@
 #include "kpad.h"
 #include "labels.h"
-const  char *labels[ROWS * COLS*6] =
+#include "sdl2utils.h"
+//const  char *labels[ROWS * COLS*6] =
+const  char *labels[] =
 {
     PLANETS,MESSIER, NGC,IC,STARS,
     GOTO,"1","2","3",B_DEL,
@@ -9,12 +11,20 @@ const  char *labels[ROWS * COLS*6] =
     TRACK, ".", "0",":","-",
     UNTRACK,HOME,CONNECT,CLOSE_CONN,ALING,
 
-    MODE,STARS, PARK,UNPARK,ALINGC,
+   /* MODE,STARS, PARK,UNPARK,ALINGC,
     GOTO,SUN,MERCURY,VENUS,MOON,
     SYNC, MARS, JUPITER,SATURN,URANUS,
     "Halt",NEPTUNE,PLUTO," ",COMET,
     TRACK, EAST,WEST,N_POLE,SOUTH,
-    UNTRACK,ZENITH,HOME,SETHOME,ALING,
+    UNTRACK,ZENITH,HOME,SETHOME,ALING,*/
+
+    MODE,STARS, N_POLE,SUN,MOON,
+    GOTO,SYNC, ZENITH, MERCURY,VENUS,
+    TRACK, UNTRACK,WEST,MARS,JUPITER,
+    HOME,SETHOME,EAST,SATURN,URANUS,
+    PARK, UNPARK,WEST,NEPTUNE,PLUTO,
+    ALING," "," "," "," ",
+
 
 
     MODE,"Alp Umi","Alp Tau","Bet Ori","Alp AUR",
@@ -31,56 +41,57 @@ const  char *labels[ROWS * COLS*6] =
     RESET,"FomalH","Achenar","Mizar","Alnilam",
     NORMAL_SYNC,GOTO,ALING," "," ",
 
-     MODE,"a","b","c","d",
-    SEARCHST,"e","f","g","h",
-    CLEAR,"i","j","k","l",
-    " ","m","n","o","p",
-    "q","r","s","t","u",
-    "w","v","x","y","z",
+    GOTO,SEARCH,SYNC,NGC,MESSIER,IC,COMET,CLEAR,
+   "a","b","c","d","e" ,"1","2","3",
+   "f","g","h", "i","j","4","5","6",
+   "k","l", "m","n","o","7","8","9",
+   "p", "q","r","s","t","/","0","-",
+   "u","w","v","x","y","z"," ",
 
-    MODE,MESSIER,NGC,IC,COMET,
-    GOTO,"1","2","3","/",
-    SYNC,"4","5","6","+",
-    CLEAR,"7","8","9","-",
-    COMET," ","0",".","*",
-    SEARCH,"r","s","t","u",
+   ".","*",
+    "r","s","t","u"
+
+   };
 
 
 
-};
-
-/*   "Mode","A","B","C","D",
-   "SearCh","E","F","G","h",
-   "Keyb","I","J","K","L",
-   "Clr","M","N","0","P",
-   "Q","R","S","T","W",
-   "U","V","X","Y","Z",
-
-"A UMI","A TAU","B ORI","A AUR",
-"A ORI","A CMA","A GEM","A CMI",
-"B GEM","A LEO","A VIR","A BOO",
-"A SCO","A LYR","A AQL","A CYG",
-"A PSA
-
-
-
-
-};*/
 
 MenuItem items[ROWS*COLS];
+MenuItem alp_items[ROWS*ALP_COLS] ;
 
 void init_mat(MenuItem *items)
 {
     int idx = 0;
+     int cell_W= (WINDOW_WIDTH -COLS*8)/COLS;
     for (int r = 0; r < ROWS; r++)
+
     {
         for (int c = 0; c < COLS; c++)
         {
             int index=r*COLS+c;
             items[index].label = labels[idx++];
-            items[index].rect.x = MARGIN_X + c * (CELL_W + 5);
+            items[index].rect.x = MARGIN_X + c * (cell_W+ 8);
             items[index].rect.y = MARGIN_Y + r * (CELL_H + 5);
-            items[index].rect.w = CELL_W;
+            items[index].rect.w = cell_W;//CELL_W;
+            items[index].rect.h = CELL_H;
+        }
+    }
+}
+
+void init_mat_cus(MenuItem *items,int rows,int cols,int offset)
+{
+    int idx = offset;
+     int cell_W= (WINDOW_WIDTH -(cols+1)*MARGIN_X)/cols;
+    for (int r = 0; r < rows; r++)
+
+    {
+        for (int c = 0; c < cols; c++)
+        {
+            int index=r*cols+c;
+            items[index].label = labels[idx++];
+            items[index].rect.x = MARGIN_X + c * (cell_W+ MARGIN_X);
+            items[index].rect.y = MARGIN_Y + r * (CELL_H + 5);
+            items[index].rect.w = cell_W;
             items[index].rect.h = CELL_H;
         }
     }
@@ -102,6 +113,19 @@ void changemat(int a,MenuItem *items)
     }
 }
 
+void changemat_cus(int a,MenuItem *items,int rows,int cols)
+{
+    int idx = 0+a*rows*cols;
+    for (int r = 0; r < rows; r++)
+    {
+        for (int c = 0; c < cols; c++)
+        {
+            int index=r*cols+c;
+            items[index].label = labels[idx++];
+
+        }
+    }
+}
 
 void readpad(SDL_Event e,int *last_axis, int *sel,int bsize)
 {

@@ -28,14 +28,14 @@
 #define OPEN_DB "/roms/esp32go/deep.db3"
 #else
 
-#define FN_BTN 8
+#define FN_BTN 90
 #define JOY1_BTN 9
 #define X_BTN 3
 #define Y_BTN 2
 #define A_BTN 1
 #define B_BTN  0
 #define SELECT_BTN 8
-//#define OPEN_DB "OpNGC.db"
+#define START_BTN 10
 #define OPEN_DB "deep.db3"
 
 

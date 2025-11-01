@@ -11,6 +11,7 @@ echo Conectando a $URL >>/dev/tty1
  if  wget -O "$ESPDIR$CFILE"  "$URL$CMD" ; then
   echo $URL  OK >>/dev/tty1
   echo Procesando fichero cometas  >>/dev/tty1
+cat  "$ESPDIR$CFILE" >>/dev/tty1
  /roms/esp32go/importcometDB.sh   "$ESPDIR$CFILE"   "$ESPDIR$DB"   "$TABLE" >>/dev/tty1
  rm "$ESPDIR$CFILE"
  else

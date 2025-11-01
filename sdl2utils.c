@@ -4,6 +4,7 @@
 extern TTF_Font* font1;
 extern TTF_Font* font2;
 extern TTF_Font* font;
+extern TTF_Font* font3;
 
 void render_text(SDL_Renderer *renderer, int x, int y, const char *text, TTF_Font *font,SDL_Color textColor)
 {
@@ -49,17 +50,17 @@ void draw_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Col
 }
 
 
-void draw_pad(SDL_Renderer *renderer,int sel_row,int sel_col,TTF_Font *font,MenuItem *items)
+void draw_pad(SDL_Renderer *renderer,int sel_row,int sel_col,TTF_Font *font,MenuItem *items,int rows,int cols)
 {
     //MenuItem* items[ROWS][COLS];
 //items[0][0]=itemsp;
     SDL_Color white = {255,0,0,255};
-    for (int r = 0; r < ROWS; r++)
+    for (int r = 0; r < rows; r++)
     {
-        for (int c = 0; c < COLS; c++)
+        for (int c = 0; c < cols; c++)
         {
-            int index=r*COLS+c;
-            if (index==sel_row*COLS+sel_col)
+            int index=r*cols+c;
+            if (index==sel_row*cols+sel_col)
             {
                 white=BLACK;
                 SDL_SetRenderDrawColor(renderer, 255, 0,0, 255);
@@ -70,7 +71,9 @@ void draw_pad(SDL_Renderer *renderer,int sel_row,int sel_col,TTF_Font *font,Menu
                 SDL_SetRenderDrawColor(renderer, 50, 40, 40, 255);
             }
             SDL_RenderFillRect(renderer, &items[index].rect);
-            draw_text(renderer, font, items[index].label, white, items[index].rect);
+            if ((strlen(items[index].label)>4) && (cols>5))
+            draw_text(renderer, font3, items[index].label, white, items[index].rect);
+            else  draw_text(renderer, font, items[index].label, white, items[index].rect);
 
         }
     }
@@ -99,6 +102,13 @@ void init_fonts(void)
     font2 = TTF_OpenFont(DVSANSBOLD, 16);
 
     if (!font2)
+    {
+        printf("[ERROR] TTF_OpenFont() Failed with: %s\n", TTF_GetError());
+        return ;
+
+    }
+     font3 = TTF_OpenFont(DVSANSBOLD, 20);
+       if (!font3)
     {
         printf("[ERROR] TTF_OpenFont() Failed with: %s\n", TTF_GetError());
         return ;

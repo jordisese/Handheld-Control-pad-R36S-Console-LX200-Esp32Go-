@@ -104,8 +104,7 @@ int squery(char* param,char* out,struct ln_equ_posn *pos,char table)
         while(SQLITE_ROW == sqlite3_step(stmt))
         {
             result=1;
-            sprintf(out,"%s,%f,%f,%s,%s", sqlite3_column_text(stmt, 0),sqlite3_column_double(stmt, 1),sqlite3_column_double(stmt, 2),
-                    sqlite3_column_text(stmt, 4),sqlite3_column_text(stmt, 5));
+            sprintf(out,"%s,%s,%s", sqlite3_column_text(stmt, 0),sqlite3_column_text(stmt, 4),sqlite3_column_text(stmt, 5));
             printf("%s\n",out);
             pos->ra=sqlite3_column_double(stmt, 1)*15.0;
             pos->dec=sqlite3_column_double(stmt, 2);
@@ -122,8 +121,9 @@ int squery(char* param,char* out,struct ln_equ_posn *pos,char table)
         while(SQLITE_ROW == sqlite3_step(stmt1))
         {
             result=1;
-            sprintf(out,"%s,%f,%f,%s,%s", sqlite3_column_text(stmt1, 5),sqlite3_column_double(stmt1, 1),sqlite3_column_double(stmt1,2),
-                    sqlite3_column_text(stmt1, 4),sqlite3_column_text(stmt1, 0));
+           // sprintf(out,"%s,%f,%f,%s,%s", sqlite3_column_text(stmt1, 5),sqlite3_column_double(stmt1, 1),sqlite3_column_double(stmt1,2),
+           //         sqlite3_column_text(stmt1, 4),sqlite3_column_text(stmt1, 0));
+           sprintf(out,"%s,%s,%s", sqlite3_column_text(stmt1, 5),sqlite3_column_text(stmt1, 4),sqlite3_column_text(stmt1, 0));
             printf("%s\n",out);
             pos->ra=sqlite3_column_double(stmt1, 1)*15.0;
             pos->dec=sqlite3_column_double(stmt1, 2);
@@ -147,8 +147,10 @@ int squery(char* param,char* out,struct ln_equ_posn *pos,char table)
             result=1;
             sprintf(out,"%s",sqlite3_column_text(stmt4, 7));
             double  eJD= tpCal(out);
-            sprintf(out,"%s,%f,%f,%f,%f,%f", sqlite3_column_text(stmt4, 0),sqlite3_column_double(stmt4, 2),sqlite3_column_double(stmt4,3),
-                    sqlite3_column_double(stmt4, 4),sqlite3_column_double(stmt4,5),sqlite3_column_double(stmt4,6));
+           // sprintf(out,"%s,%f,%f,%f,%f,%f", sqlite3_column_text(stmt4, 0),sqlite3_column_double(stmt4, 2),sqlite3_column_double(stmt4,3),
+            //        sqlite3_column_double(stmt4, 4),sqlite3_column_double(stmt4,5),sqlite3_column_double(stmt4,6));
+             sprintf(out,"%s,%f", sqlite3_column_text(stmt4, 0),sqlite3_column_double(stmt4,3));
+
             printf("%s\n",out);
             orbit.JD =  eJD;//sqlite3_column_double(stmt4, 1)+25.0;//+2451544.5;//+2400000.5;
             double q= sqlite3_column_double(stmt4, 2);

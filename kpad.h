@@ -2,9 +2,10 @@
 #include <SDL2/SDL.h>
 #define COLS 5
 #define ROWS 6
+#define ALP_COLS 8
 #define CELL_W 120
 #define CELL_H 30
-#define MARGIN_X 10
+#define MARGIN_X 5
 #define MARGIN_Y 270
 typedef struct
 {
@@ -13,6 +14,7 @@ typedef struct
 } MenuItem;
 
   void init_mat(MenuItem *items);
+ void init_mat_cus(MenuItem *items,int rows,int cols,int offset);
   void changemat(int a,MenuItem *items);
  void readpad(SDL_Event e,int *last_axis, int *sel,int bsize);
 #endif

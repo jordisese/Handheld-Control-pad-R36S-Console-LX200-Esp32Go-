@@ -110,7 +110,7 @@
 	"sdl2utils.h"
 	"kpad.h"
 
-1761575549 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/esp32go.c
+1761987579 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/esp32go.c
 	<stdio.h>
 	<stdbool.h>
 	<string.h>
@@ -123,10 +123,10 @@
 	<math.h>
 	"labels.h"
 
-1760083818 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/kpad.h
+1761839088 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/kpad.h
 	<SDL2/SDL.h>
 
-1759677652 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/conf.h
+1761924994 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/conf.h
 
 1761562370 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/query.h
 	<stdio.h>
@@ -171,22 +171,23 @@
 	<libnova/ln_types.h>
 	"conf.h"
 
-1761596830 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/kpad.c
+1761986638 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/kpad.c
 	"kpad.h"
 	"labels.h"
+	"sdl2utils.h"
 
-1759594039 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/net.c
+1761740714 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/net.c
 	"net.h"
 	<stdlib.h>
 
-1761562718 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/query.c
+1761927613 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/query.c
 	"query.h"
 	<math.h>
 
-1761555444 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/sdl2utils.c
+1761910987 source:/home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/sdl2utils.c
 	"sdl2utils.h"
 	"kpad.h"
 	"conf.h"
 
-1761576273 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/labels.h
+1761912026 /home/angel/Documentos/GitHub/Handheld-Control-pad-R36S-Console-LX200-Esp32Go-/labels.h
 

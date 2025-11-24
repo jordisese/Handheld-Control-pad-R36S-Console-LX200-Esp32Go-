@@ -10,8 +10,9 @@ void render_text(SDL_Renderer *renderer, int x, int y, const char *text, TTF_Fon
 {
     if (strlen(text)==0) return;
     SDL_Color bgColor   = {0, 0, 0, 0};    // Black background
-
-    SDL_Surface *surface = TTF_RenderUTF8_Shaded(font, text, textColor, bgColor);
+   //SDL_Color bgColor   = {255, 255, 255, 0};//white
+    //SDL_Surface *surface = TTF_RenderUTF8_Shaded(font, text, textColor, bgColor);
+     SDL_Surface *surface = TTF_RenderUTF8_Blended(font, text, textColor);
     if (!surface)
     {
         fprintf(stderr, "TTF_RenderText_Shaded Error: %s\n", TTF_GetError());
@@ -68,9 +69,11 @@ void draw_pad(SDL_Renderer *renderer,int sel_row,int sel_col,TTF_Font *font,Menu
             else
             {
                 white=RED;
-                SDL_SetRenderDrawColor(renderer, 50, 40, 40, 255);
+                SDL_SetRenderDrawColor(renderer, 20, 20, 20, 255);
             }
             SDL_RenderFillRect(renderer, &items[index].rect);
+            SDL_SetRenderDrawColor(renderer, 200, 12, 12, 255);
+            SDL_RenderDrawRect(renderer, &items[index].rect);
             if ((strlen(items[index].label)>4) && (cols>5))
             draw_text(renderer, font3, items[index].label, white, items[index].rect);
             else  draw_text(renderer, font, items[index].label, white, items[index].rect);
@@ -121,4 +124,12 @@ int read_battery(void)
     int percent=100;
     SDL_GetPowerInfo(NULL, &percent);
     return percent;
+}
+
+void load_image(SDL_Renderer *renderer,const char* file)
+{
+SDL_Surface * image = SDL_LoadBMP(file);
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, image);
+    SDL_Rect dstrect = { 5, 5, 640, 480 };
+   SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 }

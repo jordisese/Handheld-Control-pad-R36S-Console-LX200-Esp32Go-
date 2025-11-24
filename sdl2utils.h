@@ -3,12 +3,25 @@
 #include <SDL2/SDL_thread.h>
 #include <SDL2/SDL_ttf.h>
 //#include "kpad.h"
+
 #define  RED (SDL_Color) {0xFF,0, 0, 255}
 #define  REDW (SDL_Color) {0xd0,50, 0, 255}
 #define  ORANGE (SDL_Color) {0xFF,0x60, 0, 255}
 #define  D_AMBER (SDL_Color) {0xFF,0xBF, 0, 255}
 #define  WHITEL (SDL_Color) {0x60,0x60, 0x60, 0}
 #define  BLACK (SDL_Color) {0x0,0x0, 0, 255}
+#define  GREEN (SDL_Color) {0x0,0x60, 0, 255}
+
+
+/*
+#define  RED (SDL_Color) {0x10,0x10, 0x10,255}
+#define  REDW (SDL_Color) {0xd0,50, 0, 255}
+#define  ORANGE (SDL_Color) {0xFF,0x60, 0, 255}
+#define  D_AMBER (SDL_Color) {0xFF,0xBF, 0, 255}
+#define  WHITEL (SDL_Color) {0xFF,0xFF, 0x60, 0}
+#define  BLACK (SDL_Color) {0xFF,0xFF, 0xFF, 255}
+#define  GREEN (SDL_Color) {0x0,0x60, 0, 255}
+*/
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 
@@ -17,5 +30,6 @@ void render_text(SDL_Renderer *renderer, int x, int y, const char *text, TTF_Fon
 void draw_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Color color, SDL_Rect rect);
 void init_fonts(void);
 int read_battery(void);
+void load_image(SDL_Renderer *renderer,const char* file);
 //void draw_pad(SDL_Renderer *renderer,int sel_row,int sel_col,TTF_Font *font,MenuItem *items);
 #endif

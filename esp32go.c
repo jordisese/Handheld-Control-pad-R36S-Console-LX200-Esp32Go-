@@ -19,12 +19,14 @@ char buffp[200] =" ";
 char strlxcoord[256]=" ";
 char buff_alt[200] =" ";
 char buftarget[1024]=" ";
+char buftcpState[50]="  ";
+char bconnected=false;
 char str_ra[40];
 char str_dec[40];
 char str_az[40];
 char str_alt[40];
 int  pad_page=0;
-
+int bimage =0;
 extern MenuItem items[ROWS*COLS],alp_items[ROWS*ALP_COLS];
 uintptr_t sockfd;
 char buf[1024]=" ";
@@ -325,6 +327,11 @@ void calcular_posicion(const char *nombre)
         changemat( pad_page,items);
         return;
     }
+    else if (strcmp(nombre, "Image") == 0)
+    {
+        bimage=!bimage;
+        return;
+    }
     else if (strcmp(nombre, ALING) == 0)
     {
         pad_page=3;
@@ -433,7 +440,15 @@ int readsock(void *point)
                     (hpos.alt.neg<<1) +'+',hpos.alt.degrees,hpos.alt.minutes,hpos.alt.seconds);
             //printf("%s\n",buff_alt);
 
-
+            sprintf(buftcpState,"SC");
+            bconnected=true;
+            SDL_PushEvent(&user_event);
+        }
+        else
+        {
+            //printf("%d socket error \n",len);
+            sprintf(buftcpState,"NC%d",len);
+            bconnected=false;
             SDL_PushEvent(&user_event);
         }
         //  SDL_PushEvent(&user_event);
@@ -449,7 +464,10 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
     int status =buf3[47]-48+buf3[48]-48;
     const char state[50];
     const char batt[15]="100%";
-    //SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
+    char file[240];
+    // SDL_SetRenderDrawColor(renderer, 220, 220, 220, 255);
+
+
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     // sprintf(state,"%s %s %s" ,(status&1)?"Tracking":"Stop",(status&2)?"Parked":" ",(status&8)?"Slewing":" ");
     if (status&8) strcpy(( char * restrict) state,SLEWING) ;
@@ -481,6 +499,8 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
         render_text(renderer,325,90,(char*) (buf3+35),font1,REDW);//alt
         //render_text(renderer,325,150,(char*) buff_alt,font2,REDW);//alt
     }
+
+
     // render_text(renderer,550,150,(char*) buf3+47,font2,RED);
 
     //  render_text(renderer,20,20,(char*) buf3,font1,RED); //ra
@@ -492,6 +512,7 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
     sprintf((char * restrict) batt,"%d%c",read_battery(),'%');
     SDL_Rect rect= {5,5,630,140};
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    //SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
     render_text( renderer, 15,7,(char*) RA,font2,WHITEL);
     render_text( renderer, 340,7,(char*) AZ,font2,WHITEL);
     render_text( renderer, 15,75,(char*) DEC,font2,WHITEL);
@@ -499,6 +520,9 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
     render_text( renderer, 10,140,"                 ",font1,RED);
     render_text( renderer, 10,140,inputbuffer,font1,ORANGE);
     render_text( renderer, 600,7,(char*) batt,font2,ORANGE);
+
+    render_text( renderer, 280,7,(char*) buftcpState,font2,bconnected? GREEN:ORANGE);
+
     // Draw the rectangle (filled)
     SDL_RenderDrawRect(renderer, &rect);
     rect.w = 640/2;
@@ -508,7 +532,24 @@ void drawMainScreen(SDL_Renderer *renderer,int sel_row, int sel_col)
         5,144,630,120
     };
     SDL_RenderDrawRect(renderer, &rect);
+
+    //----------------------------------------------------
+    if (bimage)
+    {
+#if TARGET==PC
+        sprintf(file,"./messier/%s.bmp",inputbuffer);
+#else
+        sprintf(file,"/roms/esp32go/messier/%s.bmp",inputbuffer);
+#endif
+        load_image(renderer,file);
+        render_text( renderer, 10,10,inputbuffer,font1,ORANGE);
+        render_text(renderer,220,20,(char*) str_ra,font2,RED); //ra
+        render_text(renderer,400,20,(char*) str_dec,font2,RED);//dec
+        //------------------------------------------------------
+    }
+
     SDL_RenderPresent(renderer);
+    // printf (" status sock %d\n",check_socket(sockfd));
 
 }
 int main(int argc, char *argv[])
@@ -682,8 +723,9 @@ int main(int argc, char *argv[])
                     {
                         render_text( renderer, 20,240,(char*) "Disconnected   ",font2,RED);
                     }
-
-
+                    break;
+                case JOY1_BTN:
+                    bimage=1;
                     break;
 
                 case SELECT_BTN:
@@ -701,8 +743,8 @@ int main(int argc, char *argv[])
                 printf("Button down. Button=%d\n", e.jbutton.button);
                 /*  drawText( screenSurface, (char*) buf, 48,  0,0, fgC1, bgC1);
                   SDL_UpdateWindowSurface(window);*/
-                if ((e.jbutton.button == JOY1_BTN)  || (e.jbutton.button == A_BTN)) // Botón A
-                    //  if (e.jbutton.button == B_BTN)   // Botón A
+                // if ((e.jbutton.button == JOY1_BTN)  || (e.jbutton.button == A_BTN)) // Botón A
+                if (e.jbutton.button == A_BTN)   // Botón A
                 {
                     const char *seleccion;
                     if (pad_page==4)
@@ -741,6 +783,10 @@ int main(int argc, char *argv[])
                 case EAST_BTN: // Sstop E
                     sendCmd(sockfd, ":Qe#");
                     break;
+                case JOY1_BTN:
+                    bimage=0;
+                    break;
+
 
                 case 13: // Start
                     // quit=SDL_TRUE;

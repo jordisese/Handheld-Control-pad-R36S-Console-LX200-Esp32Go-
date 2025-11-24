@@ -80,30 +80,34 @@ int initsock()
 
 int read_esp(int sockfd,char* buffer)
 {
+
     char  buffx[100]=":Gx#";
 
-    write(sockfd, buffx, sizeof(buffx));
-    int len = read(sockfd,buffx,99);
-    if ((len==GX_SIZE)||(len==GX_SIZE+1))
 
-    {
-        //printf("%s\n",buffx);
+        write(sockfd, buffx, sizeof(buffx));
+        int len = read(sockfd,buffx,99);
+        if ((len==GX_SIZE)||(len==GX_SIZE+1))
+
+        {
+            //printf("%s\n",buffx);
 
 
 
-        buffx[10]=buffx[30]=0;
-        buffx[20]= buffx[40]=buffx[14]=0;
+            buffx[10]=buffx[30]=0;
+            buffx[20]= buffx[40]=buffx[14]=0;
 
-        buffx[24]=buffx[34]=0;
-        buffx[17]=buffx[27]=buffx[37]='\'';
-        buffx[48]=0;
-        //render_text(renderer,10,200,(char*) buf3,font2);
-        sprintf(buffer,"%s %s°%s\" %s°%s\" %s°%s\" %c%c %s",buffx,buffx+11,buffx+15,buffx+21,buffx+25,buffx+31,buffx+35,buffx[41],buffx[42],buffx+43);
-        // printf("%s\n",buffer);
-        buffer[22]= buffer[46]=buffer[10]=buffer[34]=0;
-        // printf("%s°%s\" %s°%s°%s\"",buffx,buffx+15,buffx+21,buffx+25,buffx+35);
-    }
-    else len=-1;
+            buffx[24]=buffx[34]=0;
+            buffx[17]=buffx[27]=buffx[37]='\'';
+            buffx[48]=0;
+            //render_text(renderer,10,200,(char*) buf3,font2);
+            sprintf(buffer,"%s %s°%s\" %s°%s\" %s°%s\" %c%c %s",buffx,buffx+11,buffx+15,buffx+21,buffx+25,buffx+31,buffx+35,buffx[41],buffx[42],buffx+43);
+            // printf("%s\n",buffer);
+            buffer[22]= buffer[46]=buffer[10]=buffer[34]=0;
+            // printf("%s°%s\" %s°%s°%s\"",buffx,buffx+15,buffx+21,buffx+25,buffx+35);
+        }
+        else len=-1;
+
+   // printf("sock %d \n",sockfd);
     return len;
 
 }
@@ -154,6 +158,7 @@ char* ip(void)
 int sendCmd(int sockfd, const  char* cmd)
 {
     int len=strlen(cmd);
+
     if (len>0)
         write(sockfd, cmd,len );
     return len;
@@ -188,4 +193,28 @@ int read_geo(int sockfd)
         return 1;
     }
     return 0;
+}
+
+
+int check_socket(int sockfd)
+{
+
+int testSocket;
+int error = 0;
+socklen_t len = sizeof (error);
+int retval = getsockopt (sockfd, SOL_SOCKET, SO_ERROR, &error, &len);
+
+
+
+if (retval != 0) {
+    /* there was a problem getting the error code */
+    printf( "error getting socket error code: %s\n", strerror(retval));
+    return 0;
+}
+
+if (error != 0) {
+    /* socket has a non zero error status */
+    printf("socket error: %s\n", strerror(error));
+    return error;
+}
 }

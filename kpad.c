@@ -23,7 +23,7 @@ const  char *labels[] =
     TRACK, UNTRACK,WEST,MARS,JUPITER,
     HOME,SETHOME,EAST,SATURN,URANUS,
     PARK, UNPARK,WEST,NEPTUNE,PLUTO,
-    ALING," "," "," "," ",
+    ALING,"Image"," "," "," ",
 
 
 

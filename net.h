@@ -19,4 +19,5 @@ int initsock();
 int readcc(void);
 char* ip(void);
 int read_geo(int sockfd);
+int check_socket(int sockfd);
 #endif
